@@ -1,120 +1,123 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<title>Custom Audio Player</title>
-<style>
-  body {
-    font-family: sans-serif;
-    max-width: 600px;
-    margin: 40px auto;
-    background: #f0f0f0;
-  }
-  h1 {
-    text-align: center;
-    color: #333;
-  }
-  .item {
-    background: #fff;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  .title {
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #222;
-  }
-  .player {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  button {
-    background: #ff6b6b;
-    border: none;
-    color: #fff;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  button:hover {
-    background: #ff4757;
-  }
-  input[type="range"] {
-    flex: 1;
-    cursor: pointer;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Moje audio</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      line-height: 1.6;
+    }
+    .item {
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #ccc;
+    }
+    .title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    /* Style dla niestandardowego odtwarzacza */
+    .audio-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .play-btn {
+      background-color: #F6B511;
+      border: none;
+      color: #fff;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .progress {
+      flex-grow: 1;
+      height: 6px;
+      background: #ddd;
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #F6B511;
+    }
+  </style>
 </head>
 <body>
-<h1>Pliki audio</h1>
-<div id="lista"></div>
+  <h1>Pliki audio</h1>
+  <div id="lista"></div>
 
-<script>
-const user = "xpanol";
-const repo = "AUDIO";
-const url = `https://api.github.com/repos/${user}/${repo}/contents/`;
+  <script>
+    const user = "xpanol";
+    const repo = "AUDIO";
 
-fetch(url)
-  .then(res => res.json())
-  .then(files => {
-    const container = document.getElementById("lista");
+    const url = `https://api.github.com/repos/${user}/${repo}/contents/`;
 
-    files.filter(f => f.name.toLowerCase().endsWith(".mp3"))
-      .forEach(file => {
-        const div = document.createElement("div");
-        div.className = "item";
+    fetch(url)
+      .then(res => res.json())
+      .then(files => {
+        const container = document.getElementById("lista");
 
-        const title = document.createElement("div");
-        title.className = "title";
-        title.textContent = file.name;
+        files
+          .filter(f => f.name.toLowerCase().endsWith(".mp3"))
+          .forEach(file => {
+            const div = document.createElement("div");
+            div.className = "item";
 
-        const playerDiv = document.createElement("div");
-        playerDiv.className = "player";
+            const title = document.createElement("div");
+            title.className = "title";
+            title.textContent = file.name;
 
-        const audio = document.createElement("audio");
-        audio.src = `https://${user}.github.io/${repo}/${file.name}`;
+            const audio = document.createElement("audio");
+            audio.src = `https://${user}.github.io/${repo}/${file.name}`;
 
-        const playBtn = document.createElement("button");
-        playBtn.textContent = "▶️";
-        playBtn.addEventListener("click", () => {
-          if(audio.paused) {
-            audio.play();
-            playBtn.textContent = "⏸️";
-          } else {
-            audio.pause();
-            playBtn.textContent = "▶️";
-          }
-        });
+            // niestandardowy odtwarzacz
+            const audioContainer = document.createElement("div");
+            audioContainer.className = "audio-container";
 
-        const slider = document.createElement("input");
-        slider.type = "range";
-        slider.min = 0;
-        slider.max = 100;
-        slider.value = 0;
+            const playBtn = document.createElement("button");
+            playBtn.className = "play-btn";
+            playBtn.textContent = "Play";
 
-        // Aktualizacja suwaka podczas odtwarzania
-        audio.addEventListener("timeupdate", () => {
-          slider.value = (audio.currentTime / audio.duration) * 100 || 0;
-        });
+            const progress = document.createElement("div");
+            progress.className = "progress";
 
-        // Przewijanie audio przez slider
-        slider.addEventListener("input", () => {
-          audio.currentTime = (slider.value / 100) * audio.duration;
-        });
+            const progressBar = document.createElement("div");
+            progressBar.className = "progress-bar";
+            progress.appendChild(progressBar);
 
-        playerDiv.appendChild(playBtn);
-        playerDiv.appendChild(slider);
-        div.appendChild(title);
-        div.appendChild(playerDiv);
-        container.appendChild(div);
+            playBtn.addEventListener("click", () => {
+              if(audio.paused) {
+                audio.play();
+                playBtn.textContent = "Pause";
+              } else {
+                audio.pause();
+                playBtn.textContent = "Play";
+              }
+            });
+
+            audio.addEventListener("timeupdate", () => {
+              const percent = (audio.currentTime / audio.duration) * 100;
+              progressBar.style.width = percent + "%";
+            });
+
+            audioContainer.appendChild(playBtn);
+            audioContainer.appendChild(progress);
+
+            div.appendChild(title);
+            div.appendChild(audioContainer);
+            container.appendChild(div);
+          });
+      })
+      .catch(err => {
+        document.getElementById("lista").textContent = "Błąd ładowania listy plików";
       });
-  })
-  .catch(err => {
-    document.getElementById("lista").textContent = "Błąd ładowania listy plików";
-  });
-</script>
+  </script>
 </body>
 </html>
