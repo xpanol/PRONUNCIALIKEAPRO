@@ -1,64 +1,120 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Moje audio</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      max-width: 600px;
-      margin: 40px auto;
-      line-height: 1.6;
-    }
-    .item {
-      margin-bottom: 30px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #ccc;
-    }
-    .title {
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Custom Audio Player</title>
+<style>
+  body {
+    font-family: sans-serif;
+    max-width: 600px;
+    margin: 40px auto;
+    background: #f0f0f0;
+  }
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  .item {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  .title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #222;
+  }
+  .player {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  button {
+    background: #ff6b6b;
+    border: none;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #ff4757;
+  }
+  input[type="range"] {
+    flex: 1;
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
-  <h1>Pliki audio</h1>
-  <div id="lista"></div>
+<h1>Pliki audio</h1>
+<div id="lista"></div>
 
-  <script>
-    const user = "xpanol";
-    const repo = "AUDIO";
-    const branch = "main";
+<script>
+const user = "xpanol";
+const repo = "AUDIO";
+const url = `https://api.github.com/repos/${user}/${repo}/contents/`;
 
-    const url = `https://api.github.com/repos/${user}/${repo}/contents/`;
+fetch(url)
+  .then(res => res.json())
+  .then(files => {
+    const container = document.getElementById("lista");
 
-    fetch(url)
-      .then(res => res.json())
-      .then(files => {
-        const container = document.getElementById("lista");
+    files.filter(f => f.name.toLowerCase().endsWith(".mp3"))
+      .forEach(file => {
+        const div = document.createElement("div");
+        div.className = "item";
 
-        files
-          .filter(f => f.name.toLowerCase().endsWith(".mp3"))
-          .forEach(file => {
-            const div = document.createElement("div");
-            div.className = "item";
+        const title = document.createElement("div");
+        title.className = "title";
+        title.textContent = file.name;
 
-            const title = document.createElement("div");
-            title.className = "title";
-            title.textContent = file.name;
+        const playerDiv = document.createElement("div");
+        playerDiv.className = "player";
 
-            const audio = document.createElement("audio");
-            audio.controls = true;
-            audio.src = `https://${user}.github.io/${repo}/${file.name}`;
+        const audio = document.createElement("audio");
+        audio.src = `https://${user}.github.io/${repo}/${file.name}`;
 
-            div.appendChild(title);
-            div.appendChild(audio);
-            container.appendChild(div);
-          });
-      })
-      .catch(err => {
-        document.getElementById("lista").textContent = "Błąd ładowania listy plików";
+        const playBtn = document.createElement("button");
+        playBtn.textContent = "▶️";
+        playBtn.addEventListener("click", () => {
+          if(audio.paused) {
+            audio.play();
+            playBtn.textContent = "⏸️";
+          } else {
+            audio.pause();
+            playBtn.textContent = "▶️";
+          }
+        });
+
+        const slider = document.createElement("input");
+        slider.type = "range";
+        slider.min = 0;
+        slider.max = 100;
+        slider.value = 0;
+
+        // Aktualizacja suwaka podczas odtwarzania
+        audio.addEventListener("timeupdate", () => {
+          slider.value = (audio.currentTime / audio.duration) * 100 || 0;
+        });
+
+        // Przewijanie audio przez slider
+        slider.addEventListener("input", () => {
+          audio.currentTime = (slider.value / 100) * audio.duration;
+        });
+
+        playerDiv.appendChild(playBtn);
+        playerDiv.appendChild(slider);
+        div.appendChild(title);
+        div.appendChild(playerDiv);
+        container.appendChild(div);
       });
-  </script>
+  })
+  .catch(err => {
+    document.getElementById("lista").textContent = "Błąd ładowania listy plików";
+  });
+</script>
 </body>
 </html>
