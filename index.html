@@ -10,17 +10,33 @@ body {
   font-family: 'Special Elite', cursive;
   padding: 20px;
   margin:0;
-  background: #f8ac10 url('XPANOL_SEAMLESS.png') repeat;
-  background-size: 200px; /* wielkość wzoru */
+  background: #f8ac10;
   color: #000;
   display: flex;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Pseudo-element dla wzoru */
+body::before {
+  content:'';
+  position: absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: url('XPANOL_SEAMLESS.png') repeat;
+  background-size: 200px; /* wielkość wzoru */
+  opacity: 0.3; /* tu zmieniasz przezroczystość */
+  pointer-events: none; /* nie blokuje kliknięć */
+  z-index:0;
 }
 
 /* Kontener quizu */
 #quiz-wrapper {
   width: 80%;
   max-width: 900px;
+  position: relative;
+  z-index:1; /* nad wzorem */
 }
 
 /* Duży prostokąt nagłówka */
@@ -31,8 +47,6 @@ body {
   text-align: center;
   border-radius: 8px;
   margin-bottom: 20px;
-  position: relative;
-  z-index:1;
 }
 
 #header-box h1 {
@@ -94,7 +108,7 @@ button {
   margin: 0 5px;
 }
 
-/* Modal */
+/* Modale */
 .modal {
   display:none;
   position:fixed;
@@ -160,7 +174,7 @@ button {
 </div>
 
 <script>
-// Quiz data: 30 pytań
+// Quiz data
 const quizData = [
 {question:'“Meeting” en español es:', options:['reunión','empezar la reunión','objetivos principales'], answer:'reunión'},
 {question:'“Start the meeting” se traduce como:', options:['resumen de la reunión','empezar la reunión','reunión'], answer:'empezar la reunión'},
@@ -181,7 +195,7 @@ const quizData = [
 {question:'“Tasks according to impact and urgency” se traduce como:', options:['tareas según impacto y urgencia','realizar tareas sin análisis previo','hacer cambios irrelevantes'], answer:'tareas según impacto y urgencia'},
 {question:'“Project status” en español:', options:['avance detallado de las tareas completadas hasta el momento','estado del proyecto','lista de indicadores secundarios'], answer:'estado del proyecto'},
 {question:'“Dashboard” significa:', options:['panel de control','resumen visual de métricas irrelevantes','lista de reuniones pasadas'], answer:'panel de control'},
-{question:'“Coordinate with the team” se traduce como:', options:['coordinar con el equipo','tomar decisiones sobre tareas sin consenso','establecer prioridades individualmente'], answer:'coordinar con el equipo'},
+{question:'“Coordinate with the team” se traduce como:', options:['coordinar con el equipo','tomar decyzje bez konsensusu','establecer prioridades individualmente'], answer:'coordinar con el equipo'},
 {question:'“Next step” en español:', options:['siguiente paso','optimizar','decidir más tarde'], answer:'siguiente paso'},
 {question:'“Process” significa:', options:['proceso','avance del proyecto','cambios menores sin impacto'], answer:'proceso'},
 {question:'“Optimize” se traduce como:', options:['optimizar','ajustar elementos sin importancia','decidir sin base'], answer:'optimizar'},
