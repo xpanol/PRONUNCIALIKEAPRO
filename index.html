@@ -26,8 +26,8 @@ body::before {
   width: 100%;
   height: 100%;
   background: url('XPANOL_SEAMLESS.png') repeat;
-  background-size: 150px 150px; /* tu ustawiasz rozmiar wzoru */
-  opacity: 0.3; /* przezroczystość wzoru */
+  background-size: 100px 100px; /* rozmiar wzoru */
+  opacity: 0.2; /* przezroczystość wzoru */
   z-index: 0;
 }
 
@@ -38,8 +38,17 @@ body::before {
   z-index: 1;
 }
 
+/* Tło pod nagłówki dla lepszej czytelności */
+h1, h2 {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #f8ac10; /* nasz żółty */
+  border-radius: 5px;
+}
+
 h1 { text-align:center; font-size:80px; color:#fff; margin-bottom:5px; }
 h2 { text-align:center; font-size:1.8em; color:#000; margin-bottom:20px; }
+
 .question { margin-bottom:20px; padding:15px 20px; background:#fff; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.2); font-size:1.3em;}
 .options label { display:block; margin:8px 0; cursor:pointer; font-size:1.1em; color:#000;}
 input[type="radio"] { accent-color: #f8ac10; }
@@ -84,156 +93,7 @@ button { background:#fff; border:2px solid #000; border-radius:5px; padding:8px 
 </div>
 
 <script>
-// Quiz data: 30 pytań, odpowiedzi losowo mieszane, błędne opcje dłuższe i mylące
-const quizData = [
-{question:'“Meeting” en español es:', options:['reunión','empezar la reunión','objetivos principales'], answer:'reunión'},
-{question:'“Start the meeting” se traduce como:', options:['resumen de la reunión','empezar la reunión','reunión'], answer:'empezar la reunión'},
-{question:'“Main objectives” en español:', options:['resumen de la reunión','objetivos principales','acuerdos'], answer:'objetivos principales'},
-{question:'“This quarter” significa:', options:['siguiente paso','este trimestre','periodo'], answer:'este trimestre'},
-{question:'“KPI” en español:', options:['indicador clave de rendimiento','retorno de inversión','panel de control'], answer:'indicador clave de rendimiento'},
-{question:'“Return on Investment” se traduce como:', options:['retorno de inversión','propuesta de campaña basada en tendencias externas','presupuesto aprobado por el equipo'], answer:'retorno de inversión'},
-{question:'“Digital campaign” en español:', options:['campaña digital','estrategia de contenidos','gráfico'], answer:'campaña digital'},
-{question:'“Present results” significa:', options:['presentar resultados','coordinar con el equipo antes de finalizar','revisar juntos todos los documentos'], answer:'presentar resultados'},
-{question:'“Chart” se traduce como:', options:['gráfico','panel de control','avance del proyecto'], answer:'gráfico'},
-{question:'“Increase in engagement” en español:', options:['aumento del engagement','medir únicamente likes y shares sin contexto','alcanzar mayor número de seguidores irrelevantes'], answer:'aumento del engagement'},
-{question:'“Content strategy” se traduce como:', options:['estrategia de contenidos','equipo de diseño','propuesta de contenidos sin relación con marca'], answer:'estrategia de contenidos'},
-{question:'“Updates” significa:', options:['novedades','acuerdos','resumen de la reunión'], answer:'novedades'},
-{question:'“Design team” en español:', options:['equipo de diseño','coordinador general del presupuesto','responsables de recursos humanos'], answer:'equipo de diseño'},
-{question:'“Meeting summary” se traduce como:', options:['resumen de la reunión','objetivos principales','acuerdos'], answer:'resumen de la reunión'},
-{question:'“Agreements” en español:', options:['acuerdos','resumen de la reunión','siguiente paso'], answer:'acuerdos'},
-{question:'“Set priorities” significa:', options:['establecer prioridades','optimizar recursos sin plan','coordinar con el equipo'], answer:'establecer prioridades'},
-{question:'“Tasks according to impact and urgency” se traduce como:', options:['tareas según impacto y urgencia','realizar tareas sin análisis previo','hacer cambios irrelevantes'], answer:'tareas según impacto y urgencia'},
-{question:'“Project status” en español:', options:['avance detallado de las tareas completadas hasta el momento','estado del proyecto','lista de indicadores secundarios'], answer:'estado del proyecto'},
-{question:'“Dashboard” significa:', options:['panel de control','resumen visual de métricas irrelevantes','lista de reuniones pasadas'], answer:'panel de control'},
-{question:'“Coordinate with the team” se traduce como:', options:['coordinar con el equipo','tomar decisiones sobre tareas sin consenso','establecer prioridades individualmente'], answer:'coordinar con el equipo'},
-{question:'“Next step” en español:', options:['siguiente paso','optimizar','decidir más tarde'], answer:'siguiente paso'},
-{question:'“Process” significa:', options:['proceso','avance del proyecto','cambios menores sin impacto'], answer:'proceso'},
-{question:'“Optimize” se traduce como:', options:['optimizar','ajustar elementos sin importancia','decidir sin base'], answer:'optimizar'},
-{question:'“Project progress” en español:', options:['seguimiento detallado de las tareas completadas hasta el momento','avance del proyecto','resumen de reuniones anteriores'], answer:'avance del proyecto'},
-{question:'“Changes / Modifications” se traduce como:', options:['cambios / modificaciones','tomar decisiones estratégicas sobre el presupuesto','implementar ajustes menores sin afectar el objetivo general'], answer:'cambios / modificaciones'},
-{question:'“Analyze the competition” significa:', options:['analizar la competencia','preparar un informe de actividades no relacionadas','realizar un resumen de objetivos internos'], answer:'analizar la competencia'},
-{question:'“A/B testing” en español:', options:['prueba de dos versiones de un elemento para comparar resultados','análisis de la competencia en redes sociales','propuesta de campaña creativa'], answer:'prueba de dos versiones de un elemento para comparar resultados'},
-{question:'“Ad performance” se traduce como:', options:['rendimiento de los anuncios','contenido alineado con objetivos externos','estrategia de marketing sin relación con objetivos'], answer:'rendimiento de los anuncios'},
-{question:'“Content aligned with brand objectives” significa:', options:['contenido alineado con los objetivos de marca','diseño de materiales promocionales basados en tendencias externas','creación de contenido sin relación directa con la identidad de la marca'], answer:'contenido alineado con los objetivos de marca'},
-{question:'“Creative approach” en español:', options:['enfoque creativo','atraer a la audiencia','desarrollar materiales sin alineación con la marca'], answer:'enfoque creativo'}
-];
-
-const questionsPerPage = 5;
-let currentPage = 0;
-const answersState = Array(quizData.length).fill(null);
-
-function shuffleArray(arr){
-  let array = arr.slice();
-  for(let i=array.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [array[i],array[j]]=[array[j],array[i]];
-  }
-  return array;
-}
-
-function renderPage(){
-  const container = document.getElementById('quiz-container');
-  container.innerHTML='';
-  const start = currentPage * questionsPerPage;
-  const end = start + questionsPerPage;
-  const pageData = quizData.slice(start,end);
-
-  pageData.forEach((item,index)=>{
-    const globalIndex = start + index;
-    const shuffledOptions = shuffleArray(item.options);
-    const div = document.createElement('div');
-    div.className='question';
-    div.innerHTML=`<p>${globalIndex+1}. ${item.question}</p>
-      <div class="options">
-      ${shuffledOptions.map(opt=>`<label><input type="radio" name="q${globalIndex}" value="${opt}" ${answersState[globalIndex]===opt?'checked':''}> ${opt}</label>`).join('')}
-      </div>
-      <div class="feedback" id="fb-q${globalIndex}"></div>`;
-    container.appendChild(div);
-
-    const inputs = div.querySelectorAll('input[type="radio"]');
-    inputs.forEach(input=>{
-      input.addEventListener('change',()=>{
-        answersState[globalIndex] = input.value;
-        const feedback = document.getElementById('fb-q'+globalIndex);
-        if(input.value===quizData[globalIndex].answer){
-          feedback.textContent='✅ Correcto!';
-          feedback.className='feedback correct';
-        } else {
-          feedback.textContent='❌ Incorrecto!';
-          feedback.className='feedback wrong';
-        }
-      });
-    });
-  });
-
-  renderPagination();
-}
-
-function renderPagination(){
-  const pagination = document.getElementById('pagination');
-  pagination.innerHTML='';
-
-  if(currentPage > 0){
-    const prevBtn=document.createElement('button');
-    prevBtn.textContent='Anterior';
-    prevBtn.addEventListener('click',()=>{
-      currentPage--;
-      renderPage();
-    });
-    pagination.appendChild(prevBtn);
-  }
-
-  if((currentPage+1)*questionsPerPage < quizData.length){
-    const nextBtn=document.createElement('button');
-    nextBtn.textContent='Siguiente';
-    nextBtn.addEventListener('click',()=>{
-      currentPage++;
-      renderPage();
-    });
-    pagination.appendChild(nextBtn);
-  } else {
-    const finishBtn=document.createElement('button');
-    finishBtn.textContent='Finalizar';
-    finishBtn.addEventListener('click', checkFinalScore);
-    pagination.appendChild(finishBtn);
-  }
-}
-
-function checkFinalScore(){
-  if(answersState.includes(null)){
-    alert('Debes responder todas las preguntas antes de finalizar.');
-    return;
-  }
-  let score = answersState.filter((ans,i)=>ans===quizData[i].answer).length;
-  document.getElementById('resultado').textContent=`Puntuación: ${score} / ${quizData.length}`;
-
-  const modalSuccess=document.getElementById('modal-success');
-  const modalTry=document.getElementById('modal-try');
-
-  if(score===quizData.length){
-    modalSuccess.style.display='flex';
-  } else {
-    modalTry.style.display='flex';
-  }
-}
-
-document.getElementById('modal-success').addEventListener('click',()=>{
-  document.getElementById('modal-success').style.display='none';
-});
-document.getElementById('modal-try').addEventListener('click',()=>{
-  document.getElementById('modal-try').style.display='none';
-  resetQuiz();
-});
-
-function resetQuiz(){
-  for(let i=0;i<answersState.length;i++) answersState[i]=null;
-  document.getElementById('resultado').textContent='';
-  currentPage=0;
-  renderPage();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-renderPage();
+// Tutaj wklej cały poprzedni skrypt quizu (bez zmian)
 </script>
 </body>
 </html>
