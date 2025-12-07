@@ -300,6 +300,16 @@ function init() {
 }
 
 // --- CORE FUNCTIONS ---
+
+// NOWA FUNKCJA: Przewija do przycisków kontrolnych
+function scrollToControls() {
+    const controls = document.querySelector('.button-group');
+    controls.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'end'      
+    });
+}
+
 function updateSection(lang, dialect) {
     currentLanguage = lang;
     selectedDialect = dialect;
@@ -312,6 +322,9 @@ function updateSection(lang, dialect) {
     elements.btnEsp.classList.toggle('active', lang === "ES");
     closeAllMenus();
     displayWord(currentIndex);
+    
+    // WYWOŁANIE PRZEWIJANIA PO ZMIANIE DIALEKTU/SEKCJI
+    scrollToControls(); 
 }
 
 function displayWord(index) {
