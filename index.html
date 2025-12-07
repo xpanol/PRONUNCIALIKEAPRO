@@ -1,329 +1,415 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>TESTEO - MARKETING DIGITAL | DIGITAL MARKETING</title>
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRO!NUNCIA LIKE A PRO!</title>
+<link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet">
 <style>
-/* Cała strona */
+/* --- BASE STYLES --- */
+:root {
+    --bg-english: #111;
+    --text-english: white;
+    --accent-english: #F8AC10;
+    --bg-spanish: #F8AC10;
+    --text-spanish: black;
+    --accent-spanish: #D9171A;
+}
+
 body {
-  font-family: 'Special Elite', cursive;
-  padding: 20px;
-  margin:0;
-  background: #f8ac10;
-  color: #000;
-  display: flex;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
+    font-family: 'Special Elite', monospace;
+    background-color: var(--bg-english);
+    color: var(--text-english);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    overflow-x: hidden;
 }
 
-/* Pseudo-element dla wzoru */
-body::before {
-  content:'';
-  position: absolute;
-  top:0; left:0;
-  width:100%; height:100%;
-  background: url('XPANOL_SEAMLESS.png') repeat;
-  background-size: 200px; /* wielkość wzoru */
-  opacity: 0.3; /* tu zmieniasz przezroczystość */
-  pointer-events: none; /* nie blokuje kliknięć */
-  z-index:0;
+body.english { background-color: var(--bg-english); color: var(--text-english); }
+body.spanish { background-color: var(--bg-spanish); color: var(--text-spanish); }
+
+h1 {
+    margin: 10px 0 30px 0;
+    font-size: clamp(2rem, 5vw, 2.8em);
+    line-height: 1.1;
+    color: inherit;
+}
+h1 span {
+    display: block;
+    font-size: 0.9em;
+    margin-top: 5px;
+    opacity: 0.9;
 }
 
-/* Kontener quizu */
-#quiz-wrapper {
-  width: 80%;
-  max-width: 900px;
-  position: relative;
-  z-index:1; /* nad wzorem */
+/* --- MENU & NAVIGATION --- */
+.language-switcher {
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
-/* Duży prostokąt nagłówka */
-#header-box {
-  width: 100%;
-  background-color: #f8ac10; /* nasz żółty */
-  padding: 40px 20px;
-  text-align: center;
-  border-radius: 8px;
-  margin-bottom: 20px;
+.lang-group { position: relative; }
+
+.main-lang-btn {
+    background-color: black;
+    color: white;
+    /* ZMIANA: Usunięcie obramowania */
+    border: none; 
+    padding: 10px 15px;
+    font-size: 1.1em;
+    cursor: pointer;
+    font-family: 'Special Elite', monospace;
+    border-radius: 8px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+    height: 55px;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#header-box h1 {
-  font-size: 80px;
-  color: #fff;
-  margin: 0 0 10px 0;
+.main-lang-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+
+/* Usunięcie koloru obramowania, teraz zmieniany będzie tylko kolor tła/tekstu */
+#englishSectionButton.active, #englishSectionButton:hover { background-color: white; color: black; }
+#spanishSectionButton { background-color: var(--accent-english); color: black; }
+#spanishSectionButton.active, #spanishSectionButton:hover { background-color: var(--accent-spanish); color: white; }
+
+.dialect-menu {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    /* Obramowanie menu zostaje */
+    border: 2px solid black;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    flex-direction: column;
+    z-index: 101;
+}
+.dialect-menu.show { display: flex; animation: fadeIn 0.2s ease; }
+
+.dialect-menu button {
+    width: 100%;
+    font-family: inherit;
+    font-size: 1em;
+    /* ZMIANA: Usunięcie obramowania */
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 12px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    transition: background 0.2s;
+}
+.dialect-menu button:hover { background-color: #f0f0f0; font-weight: bold; }
+
+/* --- FLASHCARD AREA --- */
+.flashcard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    margin-bottom: 30px;
+    width: 100%;
 }
 
-#header-box h2 {
-  font-size: 1.8em;
-  color: #000;
-  margin: 0;
+#currentWord {
+    font-size: clamp(3.5rem, 15vw, 10em);
+    margin: 0 0 10px 0;
+    line-height: 1.1;
+    word-break: break-word;
 }
 
-/* Pytania */
-.question {
-  margin-bottom:20px;
-  padding:15px 20px;
-  background:#fff;
-  border-radius:8px;
-  box-shadow:0 2px 5px rgba(0,0,0,0.2);
-  font-size:1.3em;
-}
-.options label {
-  display:block;
-  margin:8px 0;
-  cursor:pointer;
-  font-size:1.1em;
-  color:#000;
-}
-input[type="radio"] {
-  accent-color: #f8ac10;
-}
-.feedback {
-  margin-top:8px;
-  font-weight:bold;
-  font-size:1.1em;
-}
-.correct { color: green; }
-.wrong { color: red; }
-
-#resultado {
-  margin-top:25px;
-  font-weight:bold;
-  font-size:1.5em;
-  text-align:center;
-}
-#pagination {
-  text-align:center;
-  margin-top:20px;
-}
-button {
-  background:#fff;
-  border:2px solid #000;
-  border-radius:5px;
-  padding:8px 15px;
-  font-size:1em;
-  cursor:pointer;
-  margin: 0 5px;
+#phoneticTranscription {
+    font-size: clamp(3rem, 10vw, 7em); 
+    margin: 0 0 20px 0;
+    font-family: 'Courier New', monospace;
+    line-height: 1;
+    min-height: 1.2em;
+    font-weight: bold;
 }
 
-/* Modale */
-.modal {
-  display:none;
-  position:fixed;
-  z-index:9999;
-  left:0; top:0;
-  width:100%; height:100%;
-  background-color:rgba(0,0,0,0.7);
-  justify-content:center;
-  align-items:center;
+#contextInfo {
+    font-size: 1.2em;
+    opacity: 0.8;
+    background: rgba(0,0,0,0.1);
+    padding: 5px 15px;
+    border-radius: 20px;
 }
-.modal-content {
-  background:#fff;
-  padding:40px 60px;
-  border-radius:10px;
-  text-align:center;
-  max-width:600px;
-  animation:bounceIn 1s forwards;
+
+/* --- CONTROLS --- */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
 }
-.modal h1 {
-  font-size:3em;
-  margin-bottom:20px;
+
+.navigation-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 15px;
 }
-#modal-success h1 {
-  color: #f8ac10;
+
+.control-btn {
+    font-size: 1.2em;
+    font-family: 'Special Elite', monospace;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    /* ZMIANA: Usunięcie domyślnego obramowania */
+    border: none; 
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.modal p {
-  font-size:1.5em;
+.control-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+
+#playAudioButton {
+    width: 100%;
+    font-size: 1.4em;
+    background-color: var(--accent-spanish);
+    color: white;
+    margin-bottom: 15px;
+    /* ZMIANA: Usunięcie obramowania */
+    border: none;
 }
-@keyframes bounceIn {
-  0%{transform:scale(0.5);opacity:0;}
-  60%{transform:scale(1.2);opacity:1;}
-  100%{transform:scale(1);opacity:1;}
+#playAudioButton:hover { background-color: white; color: black; }
+
+.nav-btn { width: 48%; }
+/* Usunięcie obramowania z nav-btn i usunięcie zbędnych reguł border-color z hover/active */
+body.english .nav-btn { background-color: var(--accent-english); color: black; }
+body.english .nav-btn:hover { background-color: white; }
+body.spanish .nav-btn { background-color: black; color: white; }
+body.spanish .nav-btn:hover { background-color: white; color: black; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+    .language-switcher { flex-direction: row; flex-wrap: wrap; }
+    .main-lang-btn { font-size: 1em; height: 50px; min-width: 120px; }
+    .control-btn { height: 50px; font-size: 1em; }
 }
 </style>
 </head>
-<body>
+<body class="english">
 
-<div id="quiz-wrapper">
+    <h1>PRO!NUNCIA<br><span>LIKE A PRO!</span></h1>
 
-  <div id="header-box">
-    <h1>TESTEO</h1>
-    <h2>MARKETING DIGITAL | DIGITAL MARKETING</h2>
-  </div>
+    <div class="language-switcher">
+        <div class="lang-group">
+            <button id="englishSectionButton" class="main-lang-btn active">English 🇺🇸🇬🇧</button>
+            <div id="englishMenu" class="dialect-menu">
+                <button data-dialect="1">🇺🇸 Gen. Am.</button>
+                <button data-dialect="2">🇬🇧 UK-RP</button>
+            </div>
+        </div>
 
-  <div id="quiz-container"></div>
-  <div id="pagination"></div>
-  <div id="resultado"></div>
-</div>
+        <div class="lang-group">
+            <button id="spanishSectionButton" class="main-lang-btn">Español 🇪🇸🇲🇽</button>
+            <div id="spanishMenu" class="dialect-menu">
+                <button data-dialect="1">🇪🇸 Castilian</button>
+                <button data-dialect="2">🇲🇽 Lat. Am.</button>
+            </div>
+        </div>
+    </div>
 
-<!-- Modale -->
-<div id="modal-success" class="modal">
-  <div class="modal-content">
-    <h1>¡ENHORABUENA!</h1>
-    <p>LO HAS CONSEGUIDO :)</p>
-  </div>
-</div>
+    <div class="flashcard">
+        <div id="currentWord">Loading...</div>
+        <div id="phoneticTranscription"></div>
+        <div id="contextInfo"></div>
+    </div>
 
-<div id="modal-try" class="modal">
-  <div class="modal-content">
-    <h1>¡INTÉNTALO DE NUEVO!</h1>
-    <p>No lograste todas las respuestas correctas :)</p>
-  </div>
-</div>
+    <div class="button-group">
+        <button id="playAudioButton" class="control-btn" title="Press Spacebar">PLAY AUDIO 🎧</button>
+        <div class="navigation-row">
+            <button id="prevButton" class="control-btn nav-btn" title="Left Arrow">← Previous</button>
+            <button id="nextButton" class="control-btn nav-btn" title="Right Arrow">Next →</button>
+        </div>
+    </div>
 
 <script>
-// Quiz data
-const quizData = [
-{question:'“Meeting” en español es:', options:['reunión','empezar la reunión','objetivos principales'], answer:'reunión'},
-{question:'“Start the meeting” se traduce como:', options:['resumen de la reunión','empezar la reunión','reunión'], answer:'empezar la reunión'},
-{question:'“Main objectives” en español:', options:['resumen de la reunión','objetivos principales','acuerdos'], answer:'objetivos principales'},
-{question:'“This quarter” significa:', options:['siguiente paso','este trimestre','periodo'], answer:'este trimestre'},
-{question:'“KPI” en español:', options:['indicador clave de rendimiento','retorno de inversión','panel de control'], answer:'indicador clave de rendimiento'},
-{question:'“Return on Investment” se traduce como:', options:['retorno de inversión','propuesta de campaña basada en tendencias externas','presupuesto aprobado por el equipo'], answer:'retorno de inversión'},
-{question:'“Digital campaign” en español:', options:['campaña digital','estrategia de contenidos','gráfico'], answer:'campaña digital'},
-{question:'“Present results” significa:', options:['presentar resultados','coordinar con el equipo antes de finalizar','revisar juntos todos los documentos'], answer:'presentar resultados'},
-{question:'“Chart” se traduce como:', options:['gráfico','panel de control','avance del proyecto'], answer:'gráfico'},
-{question:'“Increase in engagement” en español:', options:['aumento del engagement','medir únicamente likes y shares sin contexto','alcanzar mayor número de seguidores irrelevantes'], answer:'aumento del engagement'},
-{question:'“Content strategy” se traduce como:', options:['estrategia de contenidos','equipo de diseño','propuesta de contenidos sin relación con marca'], answer:'estrategia de contenidos'},
-{question:'“Updates” significa:', options:['novedades','acuerdos','resumen de la reunión'], answer:'novedades'},
-{question:'“Design team” en español:', options:['equipo de diseño','coordinador general del presupuesto','responsables de recursos humanos'], answer:'equipo de diseño'},
-{question:'“Meeting summary” se traduce como:', options:['resumen de la reunión','objetivos principales','acuerdos'], answer:'resumen de la reunión'},
-{question:'“Agreements” en español:', options:['acuerdos','resumen de la reunión','siguiente paso'], answer:'acuerdos'},
-{question:'“Set priorities” significa:', options:['establecer prioridades','optimizar recursos sin plan','coordinar con el equipo'], answer:'establecer prioridades'},
-{question:'“Tasks according to impact and urgency” se traduce como:', options:['tareas según impacto y urgencia','realizar tareas sin análisis previo','hacer cambios irrelevantes'], answer:'tareas según impacto y urgencia'},
-{question:'“Project status” en español:', options:['avance detallado de las tareas completadas hasta el momento','estado del proyecto','lista de indicadores secundarios'], answer:'estado del proyecto'},
-{question:'“Dashboard” significa:', options:['panel de control','resumen visual de métricas irrelevantes','lista de reuniones pasadas'], answer:'panel de control'},
-{question:'“Coordinate with the team” se traduce como:', options:['coordinar con el equipo','tomar decyzje bez konsensusu','establecer prioridades individualmente'], answer:'coordinar con el equipo'},
-{question:'“Next step” en español:', options:['siguiente paso','optimizar','decidir más tarde'], answer:'siguiente paso'},
-{question:'“Process” significa:', options:['proceso','avance del proyecto','cambios menores sin impacto'], answer:'proceso'},
-{question:'“Optimize” se traduce como:', options:['optimizar','ajustar elementos sin importancia','decidir sin base'], answer:'optimizar'},
-{question:'“Project progress” en español:', options:['seguimiento detallado de las tareas completadas hasta el momento','avance del proyecto','resumen de reuniones anteriores'], answer:'avance del proyecto'},
-{question:'“Changes / Modifications” se traduce como:', options:['cambios / modificaciones','tomar decisiones estratégicas sobre el presupuesto','implementar ajustes menores sin afectar el objetivo general'], answer:'cambios / modificaciones'},
-{question:'“Analyze the competition” significa:', options:['analizar la competencia','preparar un informe de actividades no relacionadas','realizar un resumen de objetivos internos'], answer:'analizar la competencia'},
-{question:'“A/B testing” en español:', options:['prueba de dos versiones de un elemento para comparar resultados','análisis de la competencia en redes sociales','propuesta de campaña creativa'], answer:'prueba de dos versiones de un elemento para comparar resultados'},
-{question:'“Ad performance” se traduce como:', options:['rendimiento de los anuncios','contenido alineado con objetivos externos','estrategia de marketing sin relación con objetivos'], answer:'rendimiento de los anuncios'},
-{question:'“Content aligned with brand objectives” significa:', options:['contenido alineado con los objetivos de marca','diseño de materiales promocionales basados en tendencias externas','creación de contenido sin relación directa con la identidad de la marca'], answer:'contenido alineado con los objetivos de marca'},
-{question:'“Creative approach” en español:', options:['enfoque creativo','atraer a la audiencia','desarrollar materiales sin alineación con la marca'], answer:'enfoque creativo'}
+// --- DATA ---
+const ALL_WORDS_DATA = [
+    { word:"objetivos", lang:"ES", ipa:"oβxeˈtiβos", difficulty:"J / V" },
+    { word:"trimestre", lang:"ES", ipa:"tɾiˈmestɾe", difficulty:"TR / R" },
+    { word:"diseño", lang:"ES", ipa:"diˈseɲo", difficulty:"Ñ" },
+    { word:"campaña", lang:"ES", ipa:"kamˈpaɲa", difficulty:"Ñ" },
+    { word:"propuesta", lang:"ES", ipa:"pɾoˈpwesta", difficulty:"PR / UE" },
+    { word:"aclarar", lang:"ES", ipa:"aklaˈɾaɾ", difficulty:"R" },
+    { word:"reunión", lang:"ES", ipa:"re.uˈnjon", difficulty:"Accent / Hiato" },
+    { word:"coordinar", lang:"ES", ipa:"ko.oɾðiˈnaɾ", difficulty:"Hiato O.O" },
+    { word:"desarrollo", lang:"ES", ipa:"desaˈroʎo", difficulty:"RR / LL" },
+    { word:"éxito", lang:"ES", ipa:"ˈeθsito", ipa2:"ˈesito", difficulty:"X ([θs]/[s])" },
+    { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", difficulty:"Accent / -ge-" },
+    { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə", difficulty:"R (Am/UK)" },
+    { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl", difficulty:"Dialect Differences" },
+    { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", difficulty:"Accent / Schwa [ə]" },
+    { word:"priorities", lang:"EN", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz", difficulty:"Vowels / Accent" },
+    { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", difficulty:"TH / Silent GH" },
+    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪəˌrɑːrki", difficulty:"CH ([k]) / Accent" },
+    { word:"measure", lang:"EN", ipa:"ˈmeʒər", difficulty:"[ʒ] (soft G)" } 
 ];
 
-const questionsPerPage = 5;
-let currentPage = 0;
-const answersState = Array(quizData.length).fill(null);
+// --- STATE ---
+let currentLanguage = "EN";
+let filteredWords = [];
+let currentIndex = 0;
+let selectedDialect = "1";
 
-function shuffleArray(arr){
-  let array = arr.slice();
-  for(let i=array.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [array[i],array[j]]=[array[j],array[i]];
-  }
-  return array;
+// --- DOM ELEMENTS ---
+const elements = {
+    word: document.getElementById('currentWord'),
+    phonetic: document.getElementById('phoneticTranscription'),
+    context: document.getElementById('contextInfo'),
+    btnPlay: document.getElementById('playAudioButton'),
+    btnNext: document.getElementById('nextButton'),
+    btnPrev: document.getElementById('prevButton'),
+    btnEng: document.getElementById('englishSectionButton'),
+    btnEsp: document.getElementById('spanishSectionButton')
+};
+
+// --- INITIALIZATION ---
+function init() {
+    updateSection("EN", "1");
+    setupEventListeners();
 }
 
-function renderPage(){
-  const container = document.getElementById('quiz-container');
-  container.innerHTML='';
-  const start = currentPage * questionsPerPage;
-  const end = start + questionsPerPage;
-  const pageData = quizData.slice(start,end);
+// --- CORE FUNCTIONS ---
+function updateSection(lang, dialect) {
+    currentLanguage = lang;
+    selectedDialect = dialect;
 
-  pageData.forEach((item,index)=>{
-    const globalIndex = start + index;
-    const shuffledOptions = shuffleArray(item.options);
-    const div = document.createElement('div');
-    div.className='question';
-    div.innerHTML=`<p>${globalIndex+1}. ${item.question}</p>
-      <div class="options">
-      ${shuffledOptions.map(opt=>`<label><input type="radio" name="q${globalIndex}" value="${opt}" ${answersState[globalIndex]===opt?'checked':''}> ${opt}</label>`).join('')}
-      </div>
-      <div class="feedback" id="fb-q${globalIndex}"></div>`;
-    container.appendChild(div);
+    filteredWords = ALL_WORDS_DATA.filter(w => w.lang === lang);
+    currentIndex = 0;
 
-    const inputs = div.querySelectorAll('input[type="radio"]');
-    inputs.forEach(input=>{
-      input.addEventListener('change',()=>{
-        answersState[globalIndex] = input.value;
-        const feedback = document.getElementById('fb-q'+globalIndex);
-        if(input.value===quizData[globalIndex].answer){
-          feedback.textContent='✅ Correcto!';
-          feedback.className='feedback correct';
+    document.body.className = lang === "EN" ? "english" : "spanish";
+    elements.btnEng.classList.toggle('active', lang === "EN");
+    elements.btnEsp.classList.toggle('active', lang === "ES");
+    closeAllMenus();
+    displayWord(currentIndex);
+}
+
+function displayWord(index) {
+    if (!filteredWords.length) return;
+    const data = filteredWords[index];
+    
+    elements.word.style.opacity = 0;
+    setTimeout(() => {
+        elements.word.textContent = data.word;
+        const showSecondIPA = (selectedDialect === "2" && data.ipa2);
+        
+        elements.phonetic.textContent = showSecondIPA ? data.ipa2 : data.ipa;
+        
+        // --- LOGIKA WIDOCZNOŚCI ---
+        if (currentLanguage === "EN") {
+            // Ciemne tło: Żółty tekst z subtelnym białym cieniem (glow)
+            elements.phonetic.style.color = "#F8AC10";
+            elements.phonetic.style.textShadow = "0 0 5px rgba(255, 255, 255, 0.4)";
         } else {
-          feedback.textContent='❌ Incorrecto!';
-          feedback.className='feedback wrong';
+            // Jasne tło (Hiszpański): Biały tekst z DELIKATNYM czarnym cieniem
+            elements.phonetic.style.color = "white"; 
+            elements.phonetic.style.textShadow = "2px 2px 4px rgba(0, 0, 0, 0.7)";
         }
-      });
+        // ------------------------------------
+
+        const langName = currentLanguage === "EN" ? "English" : "Español";
+        const dialectName = currentLanguage === "EN" 
+            ? (selectedDialect === "1" ? "Gen. Am." : "UK-RP") 
+            : (selectedDialect === "1" ? "Castilian" : "Lat. Am.");
+        
+        elements.context.textContent = `${langName} | ${dialectName} ${data.difficulty ? "| Focus: " + data.difficulty : ""}`;
+        elements.word.style.opacity = 1;
+    }, 150);
+}
+
+function playAudio() {
+    const data = filteredWords[currentIndex];
+    const baseName = data.word.toLowerCase()
+        .replace(/ /g,'_')
+        .normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+    
+    const audioPath = data.ipa2 ? `audio/${baseName}_${selectedDialect}.mp3` : `audio/${baseName}.mp3`;
+    
+    const audio = new Audio(audioPath);
+    audio.play().catch(e => {
+        console.error("Audio error:", e);
     });
-  });
-
-  renderPagination();
 }
 
-function renderPagination(){
-  const pagination = document.getElementById('pagination');
-  pagination.innerHTML='';
+function nextWord() {
+    currentIndex = (currentIndex + 1) % filteredWords.length;
+    displayWord(currentIndex);
+}
 
-  if(currentPage > 0){
-    const prevBtn=document.createElement('button');
-    prevBtn.textContent='Anterior';
-    prevBtn.addEventListener('click',()=>{
-      currentPage--;
-      renderPage();
+function prevWord() {
+    currentIndex = (currentIndex - 1 + filteredWords.length) % filteredWords.length;
+    displayWord(currentIndex);
+}
+
+function toggleMenu(menuId, event) {
+    event.stopPropagation();
+    const menu = document.getElementById(menuId);
+    const isVisible = menu.classList.contains('show');
+    closeAllMenus();
+    if (!isVisible) menu.classList.add('show');
+}
+
+function closeAllMenus() {
+    document.querySelectorAll('.dialect-menu').forEach(el => el.classList.remove('show'));
+}
+
+function setupEventListeners() {
+    elements.btnEng.onclick = (e) => toggleMenu('englishMenu', e);
+    elements.btnEsp.onclick = (e) => toggleMenu('spanishMenu', e);
+    elements.btnNext.onclick = nextWord;
+    elements.btnPrev.onclick = prevWord;
+    elements.btnPlay.onclick = playAudio;
+
+    document.querySelectorAll('#englishMenu button').forEach(btn => {
+        btn.onclick = () => updateSection("EN", btn.dataset.dialect);
     });
-    pagination.appendChild(prevBtn);
-  }
-
-  if((currentPage+1)*questionsPerPage < quizData.length){
-    const nextBtn=document.createElement('button');
-    nextBtn.textContent='Siguiente';
-    nextBtn.addEventListener('click',()=>{
-      currentPage++;
-      renderPage();
+    document.querySelectorAll('#spanishMenu button').forEach(btn => {
+        btn.onclick = () => updateSection("ES", btn.dataset.dialect);
     });
-    pagination.appendChild(nextBtn);
-  } else {
-    const finishBtn=document.createElement('button');
-    finishBtn.textContent='Finalizar';
-    finishBtn.addEventListener('click', checkFinalScore);
-    pagination.appendChild(finishBtn);
-  }
+
+    window.onclick = () => closeAllMenus();
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === "ArrowRight") nextWord();
+        if (e.key === "ArrowLeft") prevWord();
+        if (e.key === " " || e.key === "Enter") {
+            e.preventDefault();
+            playAudio();
+        }
+    });
 }
 
-function checkFinalScore(){
-  if(answersState.includes(null)){
-    alert('Debes responder todas las preguntas antes de finalizar.');
-    return;
-  }
-  let score = answersState.filter((ans,i)=>ans===quizData[i].answer).length;
-  document.getElementById('resultado').textContent=`Puntuación: ${score} / ${quizData.length}`;
-
-  const modalSuccess=document.getElementById('modal-success');
-  const modalTry=document.getElementById('modal-try');
-
-  if(score===quizData.length){
-    modalSuccess.style.display='flex';
-  } else {
-    modalTry.style.display='flex';
-  }
-}
-
-document.getElementById('modal-success').addEventListener('click',()=>{
-  document.getElementById('modal-success').style.display='none';
-});
-document.getElementById('modal-try').addEventListener('click',()=>{
-  document.getElementById('modal-try').style.display='none';
-  resetQuiz();
-});
-
-function resetQuiz(){
-  for(let i=0;i<answersState.length;i++) answersState[i]=null;
-  document.getElementById('resultado').textContent='';
-  currentPage=0;
-  renderPage();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-renderPage();
+init();
 </script>
 </body>
 </html>
