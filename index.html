@@ -309,8 +309,7 @@ const elements = {
     btnEsp: document.getElementById('spanishSectionButton')
 };
 
-// ELEMENTY DO PRZEWIJANIA: Kontener przełączników językowych i Fisza
-const languageSwitcher = document.querySelector('.language-switcher');
+// ELEMENTY DO PRZEWIJANIA
 const flashcardElement = document.querySelector('.flashcard');
 
 
@@ -336,14 +335,13 @@ function updateSection(lang, dialect, shouldScroll = true) {
     closeAllMenus();
     displayWord(currentIndex);
     
-    // LOGIKA PRZEWIJANIA: Przewijamy do fiszki TYLKO w orientacji poziomej
-    if (shouldScroll && flashcardElement && window.matchMedia("(orientation: landscape)").matches) {
+    // PRZEWIJANIE DO KONTENERA FISZKI: Działa w OBU ORIENTACJACH
+    if (shouldScroll && flashcardElement) {
         flashcardElement.scrollIntoView({ 
             behavior: 'smooth', 
             block: 'start' // Ustawia górę fiszki na górze okna
         });
     }
-    // Jeśli nie jesteśmy w trybie landscape, przewijanie pozostaje nieaktywne (albo działa na poprzednich zasadach, ale tu celujemy w flashcard)
 }
 
 function displayWord(index) {
