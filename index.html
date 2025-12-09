@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PRO!NUNCIA LIKE A PRO!</title>
-<link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet" />
 <style>
-/* --- BASE STYLES --- */
 :root {
     --bg-english: #111;
     --text-english: white;
@@ -49,7 +48,6 @@ h1 span {
     opacity: 0.9;
 }
 
-/* --- MENU & NAVIGATION --- */
 .language-switcher {
     margin-bottom: 30px;
     position: relative;
@@ -64,7 +62,7 @@ h1 span {
 .main-lang-btn {
     background-color: black;
     color: white;
-    border: none; 
+    border: none;
     padding: 10px 15px;
     font-size: 1.1em;
     cursor: pointer;
@@ -115,7 +113,6 @@ h1 span {
 }
 .dialect-menu button:hover { background-color: #f0f0f0; font-weight: bold; }
 
-/* --- FLASHCARD AREA (DOMYŚLNE WIDOK PIONOWY) --- */
 .flashcard {
     display: flex;
     flex-direction: column;
@@ -127,7 +124,6 @@ h1 span {
 }
 
 #currentWord {
-    /* WIDOK PIONOWY (DEFAULT) */
     font-size: clamp(3.5rem, 15vw, 10em);
     margin: 0 0 10px 0;
     line-height: 1.1;
@@ -135,13 +131,12 @@ h1 span {
 }
 
 #phoneticTranscription {
-    /* WIDOK PIONOWY (DEFAULT) */
-    font-size: clamp(3rem, 10vw, 7em); 
-    margin: 0 0 20px 0;
+    font-size: clamp(3rem, 10vw, 7em);
     font-family: 'Courier New', monospace;
     line-height: 1;
     min-height: 1.2em;
     font-weight: bold;
+    text-shadow: none;
 }
 
 #contextInfo {
@@ -152,7 +147,6 @@ h1 span {
     border-radius: 20px;
 }
 
-/* --- CONTROLS --- */
 .button-group {
     display: flex;
     flex-direction: column;
@@ -174,7 +168,7 @@ h1 span {
     cursor: pointer;
     transition: all 0.2s ease;
     border-radius: 8px;
-    border: none; 
+    border: none;
     box-shadow: 0 4px 0 rgba(0,0,0,0.2);
     height: 60px;
     display: flex;
@@ -210,24 +204,12 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
     .control-btn { height: 50px; font-size: 1em; }
 }
 
-/* ZMIANY DLA WIDOKU POZIOMEGO (Landscape) */
 @media (orientation: landscape) {
-    /* Zmniejszenie głównego słowa o połowę */
-    #currentWord {
-        font-size: clamp(1.75rem, 7.5vw, 5em); 
-    }
-
-    /* Zmniejszenie zapisu fonetycznego o połowę */
-    #phoneticTranscription {
-        font-size: clamp(1.5rem, 5vw, 3.5em); 
-    }
+    #currentWord { font-size: clamp(1.75rem, 7.5vw, 5em); }
+    #phoneticTranscription { font-size: clamp(1.5rem, 5vw, 3.5em); }
 }
 
-/* Niewidzialny spacer wymuszający przewijanie na krótkich ekranach */
-.spacer {
-    height: 10px; 
-    visibility: hidden;
-}
+.spacer { height: 10px; visibility: hidden; }
 </style>
 </head>
 <body class="english">
@@ -261,43 +243,61 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
     <div class="button-group">
         <button id="playAudioButton" class="control-btn" title="Press Spacebar">PLAY AUDIO 🎧</button>
         <div class="navigation-row">
-            <button id="prevButton" class="control-btn nav-btn" title="Left Arrow">← Previous</button>
-            <button id="nextButton" class="control-btn nav-btn" title="Right Arrow">Next →</button>
+            <button id="prevButton" class="control-btn nav-btn" title="Left Arrow">- Previous</button>
+            <button id="nextButton" class="control-btn nav-btn" title="Right Arrow">Next -</button>
         </div>
     </div>
-    
+
     <div class="spacer"></div>
 
 <script>
-// --- DATA ---
 const ALL_WORDS_DATA = [
-    { word:"objetivos", lang:"ES", ipa:"oβxeˈtiβos", difficulty:"J / V" },
-    { word:"trimestre", lang:"ES", ipa:"tɾiˈmestɾe", difficulty:"TR / R" },
-    { word:"diseño", lang:"ES", ipa:"diˈseɲo", difficulty:"Ñ" },
-    { word:"campaña", lang:"ES", ipa:"kamˈpaɲa", difficulty:"Ñ" },
-    { word:"propuesta", lang:"ES", ipa:"pɾoˈpwesta", difficulty:"PR / UE" },
-    { word:"aclarar", lang:"ES", ipa:"aklaˈɾaɾ", difficulty:"R" },
-    { word:"reunión", lang:"ES", ipa:"re.uˈnjon", difficulty:"Accent / Hiato" },
-    { word:"coordinar", lang:"ES", ipa:"ko.oɾðiˈnaɾ", difficulty:"Hiato O.O" },
-    { word:"desarrollo", lang:"ES", ipa:"desaˈroʎo", difficulty:"RR / LL" },
-    { word:"éxito", lang:"ES", ipa:"ˈeθsito", ipa2:"ˈesito", difficulty:"X ([θs]/[s])" },
-    { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", difficulty:"Accent / -ge-" },
+    { word:"approach", lang:"EN", ipa:"əˈproʊtʃ", ipa2:"əˈprəʊtʃ", difficulty:"Vowels" },
+    { word:"call", lang:"EN", ipa:"kɔːl", difficulty:"Short A / L" },
+    { word:"change", lang:"EN", ipa:"tʃeɪndʒ", difficulty:"Ch / Vowel" },
+    { word:"clarify", lang:"EN", ipa:"ˈklærəfaɪ", difficulty:"Clarity" },
+    { word:"creative", lang:"EN", ipa:"kriˈeɪtɪv", difficulty:"Stress" },
+    { word:"key", lang:"EN", ipa:"kiː", difficulty:"Vowel" },
+    { word:"meeting", lang:"EN", ipa:"ˈmiːtɪŋ", difficulty:"ing" },
+    { word:"networks", lang:"EN", ipa:"ˈnetˌwɜːrks", ipa2:"ˈnetˌwɜːks", difficulty:"R / S" },
+    { word:"optimize", lang:"EN", ipa:"ˈɑːptɪmaɪz", ipa2:"ˈɒptɪmaɪz", difficulty:"Vowels" },
+    { word:"panel", lang:"EN", ipa:"ˈpænəl", difficulty:"Short A" },
+    { word:"revenue", lang:"EN", ipa:"ˈrevənuː", ipa2:"ˈrevənjuː", difficulty:"Vowel/Accent" },
+    { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt", difficulty:"Short U / T" },
+    { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt", difficulty:"Vowel Diphthong" },
+    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi", difficulty:"Short A / Accent" },
+    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt", difficulty:"R (Am/UK)" },
+    { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", difficulty:"Accent / ge" },
     { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə", difficulty:"R (Am/UK)" },
     { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl", difficulty:"Dialect Differences" },
-    { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", difficulty:"Accent / Schwa [ə]" },
+    { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", difficulty:"Accent / Schwa" },
     { word:"priorities", lang:"EN", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz", difficulty:"Vowels / Accent" },
-    { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", difficulty:"TH / Silent GH" },
-    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪəˌrɑːrki", difficulty:"CH ([k]) / Accent" },
-    { word:"measure", lang:"EN", ipa:"ˈmeʒər", difficulty:"[ʒ] (soft G)" } 
+    { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", difficulty:"TH" },
+    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪəˌrɑːrki", difficulty:"CH ([k])" },
+    { word:"measure", lang:"EN", ipa:"ˈmeʒər", difficulty:"ʒ" },
+
+    { word:"liderazgo", lang:"ES", ipa:"liðeˈɾaθɣo", ipa2:"liðeˈɾasɣo", difficulty:"Z" },
+    { word:"mercado", lang:"ES", ipa:"meɾˈkaðo", difficulty:"R / D" },
+    { word:"recursos", lang:"ES", ipa:"reˈkuɾsos", difficulty:"R / C" },
+    { word:"equipo", lang:"ES", ipa:"eˈkipo", difficulty:"Akcent" },
+    { word:"desafío", lang:"ES", ipa:"desaˈfio", difficulty:"i" },
+    { word:"objetivos", lang:"ES", ipa:"oβxeˈtiβos", difficulty:"V" },
+    { word:"trimestre", lang:"ES", ipa:"tɾiˈmestɾe", difficulty:"TR" },
+    { word:"diseño", lang:"ES", ipa:"diˈseɲo", difficulty:"Ñ" },
+    { word:"campaña", lang:"ES", ipa:"kamˈpaɲa", difficulty:"Ñ" },
+    { word:"propuesta", lang:"ES", ipa:"pɾoˈpwesta", difficulty:"UE" },
+    { word:"aclarar", lang:"ES", ipa:"aklaˈɾaɾ", difficulty:"R" },
+    { word:"reunión", lang:"ES", ipa:"re.uˈnjon", difficulty:"Hiato" },
+    { word:"coordinar", lang:"ES", ipa:"ko.oɾðiˈnaɾ", difficulty:"Hiato" },
+    { word:"desarrollo", lang:"ES", ipa:"desaˈroʎo", difficulty:"RR" },
+    { word:"éxito", lang:"ES", ipa:"ˈeθsito", ipa2:"ˈesito", difficulty:"X" }
 ];
 
-// --- STATE ---
 let currentLanguage = "EN";
 let filteredWords = [];
 let currentIndex = 0;
 let selectedDialect = "1";
 
-// --- DOM ELEMENTS ---
 const elements = {
     word: document.getElementById('currentWord'),
     phonetic: document.getElementById('phoneticTranscription'),
@@ -309,86 +309,59 @@ const elements = {
     btnEsp: document.getElementById('spanishSectionButton')
 };
 
-// ELEMENTY DO PRZEWIJANIA
 const flashcardElement = document.querySelector('.flashcard');
 
-
-// --- INITIALIZATION ---
 function init() {
-    // Nie przewijaj przy inicjalizacji
-    updateSection("EN", "1", false); 
+    updateSection("EN", "1", false);
     setupEventListeners();
 }
-
-// --- CORE FUNCTIONS ---
 
 function updateSection(lang, dialect, shouldScroll = true) {
     currentLanguage = lang;
     selectedDialect = dialect;
-
     filteredWords = ALL_WORDS_DATA.filter(w => w.lang === lang);
     currentIndex = 0;
-
     document.body.className = lang === "EN" ? "english" : "spanish";
     elements.btnEng.classList.toggle('active', lang === "EN");
     elements.btnEsp.classList.toggle('active', lang === "ES");
     closeAllMenus();
     displayWord(currentIndex);
-    
-    // PRZEWIJANIE DO KONTENERA FISZKI: Działa w OBU ORIENTACJACH
     if (shouldScroll && flashcardElement) {
-        flashcardElement.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' // Ustawia górę fiszki na górze okna
-        });
+        flashcardElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
 
 function displayWord(index) {
     if (!filteredWords.length) return;
     const data = filteredWords[index];
-    
     elements.word.style.opacity = 0;
     setTimeout(() => {
         elements.word.textContent = data.word;
-        const showSecondIPA = (selectedDialect === "2" && data.ipa2);
-        
+        const showSecondIPA = selectedDialect === "2" && data.ipa2;
         elements.phonetic.textContent = showSecondIPA ? data.ipa2 : data.ipa;
-        
-        // --- LOGIKA WIDOCZNOŚCI ---
         if (currentLanguage === "EN") {
-            // Ciemne tło: Żółty tekst z subtelnym białym cieniem (glow)
             elements.phonetic.style.color = "#F8AC10";
-            elements.phonetic.style.textShadow = "0 0 5px rgba(255, 255, 255, 0.4)";
+            elements.phonetic.style.textShadow = "none";
         } else {
-            // Jasne tło (Hiszpański): Biały tekst z DELIKATNYM czarnym cieniem
-            elements.phonetic.style.color = "white"; 
+            elements.phonetic.style.color = "white";
             elements.phonetic.style.textShadow = "2px 2px 4px rgba(0, 0, 0, 0.7)";
         }
-        // ------------------------------------
-
         const langName = currentLanguage === "EN" ? "English" : "Español";
-        const dialectName = currentLanguage === "EN" 
-            ? (selectedDialect === "1" ? "Gen. Am." : "UK-RP") 
+        const dialectName = currentLanguage === "EN"
+            ? (selectedDialect === "1" ? "Gen. Am." : "UK-RP")
             : (selectedDialect === "1" ? "Castilian" : "Lat. Am.");
-        
-        elements.context.textContent = `${langName} | ${dialectName} ${data.difficulty ? "| Focus: " + data.difficulty : ""}`;
+        elements.context.textContent = langName + " | " + dialectName + (data.difficulty ? " | Focus: " + data.difficulty : "");
         elements.word.style.opacity = 1;
     }, 150);
 }
 
+// --- POPRAWKA ŚCIEŻKI AUDIO ---
 function playAudio() {
+    if (!filteredWords.length) return;
     const data = filteredWords[currentIndex];
-    const baseName = data.word.toLowerCase()
-        .replace(/ /g,'_')
-        .normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-    
-    const audioPath = data.ipa2 ? `audio/${baseName}_${selectedDialect}.mp3` : `audio/${baseName}.mp3`;
-    
+    const audioPath = `audio/${data.word}.mp3`; // tutaj małe litery
     const audio = new Audio(audioPath);
-    audio.play().catch(e => {
-        console.error("Audio error:", e);
-    });
+    audio.play().catch(e => console.error("Audio error:", e));
 }
 
 function nextWord() {
@@ -419,27 +392,25 @@ function setupEventListeners() {
     elements.btnNext.onclick = nextWord;
     elements.btnPrev.onclick = prevWord;
     elements.btnPlay.onclick = playAudio;
-
-    document.querySelectorAll('#englishMenu button').forEach(btn => {
-        btn.onclick = () => updateSection("EN", btn.dataset.dialect, true);
-    });
-    document.querySelectorAll('#spanishMenu button').forEach(btn => {
-        btn.onclick = () => updateSection("ES", btn.dataset.dialect, true);
-    });
-
+    document.querySelectorAll('#englishMenu button').forEach(btn =>
+        btn.onclick = () => updateSection("EN", btn.dataset.dialect, true)
+    );
+    document.querySelectorAll('#spanishMenu button').forEach(btn =>
+        btn.onclick = () => updateSection("ES", btn.dataset.dialect, true)
+    );
     window.onclick = () => closeAllMenus();
-
     document.addEventListener('keydown', (e) => {
-        if (e.key === "ArrowRight") nextWord();
-        if (e.key === "ArrowLeft") prevWord();
-        if (e.key === " " || e.key === "Enter") {
+        if (e.code === 'Space' || e.key === ' ') {
             e.preventDefault();
             playAudio();
         }
+        if (e.key === 'ArrowRight') nextWord();
+        if (e.key === 'ArrowLeft') prevWord();
     });
 }
 
 init();
 </script>
+
 </body>
 </html>
