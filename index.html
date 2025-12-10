@@ -6,6 +6,7 @@
 <title>PRO!NUNCIA LIKE A PRO!</title>
 <link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet" />
 <style>
+/* CSS pozostaje bez zmian */
 :root {
     --bg-english: #111;
     --text-english: white;
@@ -237,43 +238,10 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
-// SPRAWDZONA I POPRAWIONA TABLICA DANYCH (możliwa przyczyna błędu składni)
+// MINIMALNA I BEZPIECZNA TABLICA DANYCH
 const ALL_WORDS_DATA = [
-    { word:"approach", lang:"EN", ipa:"əˈproʊtʃ", ipa2:"əˈprəʊtʃ" },
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
-    { word:"call", lang:"EN", ipa:"kɔːl", ipa2:"kɔːl" },
-    { word:"change", lang:"EN", ipa:"tʃeɪndʒ", ipa2:"tʃeɪndʒ" },
-    { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
-    { word:"clarify", lang:"EN", ipa:"ˈklærəfaɪ", ipa2:"ˈklærəfaɪ" },
-    { word:"creative", lang:"EN", ipa:"kriˈeɪt̬ɪv", ipa2:"kriːˈeɪtɪv" },
-    { word:"dashboard", lang:"EN", ipa:"ˈdæʃbɔːrd", ipa2:"ˈdæʃbɔːd" },
-    { word:"design", lang:"EN", ipa:"dɪˈzaɪn", ipa2:"dɪˈzaɪn" },
-    { word:"digital", lang:"EN", ipa:"ˈdɪdʒət̬əl", ipa2:"ˈdɪdʒɪtəl" },
-    { word:"direct", lang:"EN", ipa:"dəˈrekt", ipa2:"daɪˈrekt" },
-    { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" },
-    { word:"diagnosis", lang:"EN", ipa:"ˌdaɪ.əɡˈnoʊ.sɪs", ipa2:"ˌdaɪ.əɡˈnəʊ.sɪs" },
-    { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", ipa2:"ɪnˈɡeɪdʒmənt" },
-    { word:"feedback", lang:"EN", ipa:"ˈfiːdbæk", ipa2:"ˈfiːdbæk" },
-    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪərɑːrki", ipa2:"ˈhaɪərɑːki" },
-    { word:"key", lang:"EN", ipa:"kiː", ipa2:"kiː" },
-    { word:"meeting", lang:"EN", ipa:"ˈmiːtɪŋ", ipa2:"ˈmiːtɪŋ" },
-    { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
-    { word:"networks", lang:"EN", ipa:"ˈnetwɝːk", ipa2:"ˈnetwɜːk" },
-    { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", ipa2:"əbˈdʒektɪv" },
-    { word:"optimize", lang:"EN", ipa:"ˈɑːptɪmaɪz", ipa2:"ˈɒptɪmaɪz" },
-    { word:"panel", lang:"EN", ipa:"ˈpænəl", ipa2:"ˈpænəl" },
-    { word:"performance", lang:"EN", ipa:"pɚˈfɔːrməns", ipa2:"pəˈfɔːməns" },
-    { word:"priorities", lang:"EN", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz" },
-    { word:"process", lang:"EN", ipa:"ˈprɑːses", ipa2:"ˈprəʊses" },
-    { word:"progress", lang:"EN", ipa:"ˈprɑːɡres", ipa2:"ˈprəʊɡres" },
-    { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
-    { word:"reach", lang:"EN", ipa:"riːtʃ", ipa2:"riːtʃ" },
-    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt" },
-    { word:"revenue", lang:"EN", ipa:"ˈrevənuː", ipa2:"ˈrevənjuː" },
-    { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
-    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
-    { word:"supervisor", lang:"EN", ipa:"ˈsuːpərvaɪzər", ipa2:"ˈsuːpəvaɪzə" },
-    { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" }
+    { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" }
 ];
 
 let currentLanguage = "EN";
@@ -282,7 +250,7 @@ let currentIndex = 0;
 let selectedDialect = "1";
 
 const elements = {
-    word: document.getElementById('currentWord'),
+    word: document.getElementById('currentWord'), 
     phonetic: document.getElementById('phoneticTranscription'),
     btnPlay: document.getElementById('playAudioButton'),
     btnNext: document.getElementById('nextButton'),
@@ -294,10 +262,14 @@ const elements = {
 
 const flashcardElement = document.querySelector('.flashcard');
 
+// Funkcja odpowiedzialna za inicjalizację
 function init() {
-    // Kopiowanie i sortowanie danych na starcie
-    const sortedData = ALL_WORDS_DATA.slice().sort((a, b) => a.word.localeCompare(b.word));
-    filteredWords = sortedData;
+    if (!elements.word || ALL_WORDS_DATA.length === 0) {
+        if (elements.word) elements.word.textContent = "Brak słów do załadowania.";
+        return; 
+    }
+    
+    filteredWords = ALL_WORDS_DATA.slice();
     updateSection("EN","1",false);
     setupEventListeners();
 }
@@ -305,8 +277,7 @@ function init() {
 function updateSection(lang, dialect, shouldScroll=true){
     currentLanguage=lang;
     selectedDialect=dialect;
-    // Ponowne sortowanie przy zmianie sekcji
-    filteredWords = lang==="EN"?ALL_WORDS_DATA.slice().sort((a, b) => a.word.localeCompare(b.word)):[];
+    filteredWords = lang==="EN"?ALL_WORDS_DATA.slice():[];
     currentIndex=0;
     document.body.className=lang==="EN"?"english":"spanish";
     elements.btnEng.classList.toggle('active',lang==="EN");
@@ -317,6 +288,8 @@ function updateSection(lang, dialect, shouldScroll=true){
 }
 
 function displayWord(index){
+    if(!elements.word) return; 
+
     if(!filteredWords.length){
         elements.word.textContent="No words";
         elements.phonetic.textContent="";
@@ -338,24 +311,20 @@ function displayWord(index){
     },150);
 }
 
-// Funkcja playAudio (stabilna)
+// Funkcja playAudio
 function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
-    
-    // Budowanie ścieżki
     const path = `audio/${data.word.toLowerCase().trim()}.mp3`;
-    
     const audio = new Audio(path);
     
     audio.onerror = function() {
         console.error("Błąd ładowania pliku audio dla ścieżki:", path);
-        console.error("Sprawdź nazwę pliku w repozytorium (musi być małą literą!) oraz upewnij się, że plik jest sprawny.");
+        console.error("Sprawdź nazwę pliku.");
     };
 
     audio.play().catch(err => {
-        // Ignorowanie błędu autoodtwarzania
-        console.warn("Błąd odtwarzania (poza ładowaniem pliku):", err);
+        console.warn("Błąd odtwarzania:", err);
     });
 }
 
@@ -366,11 +335,13 @@ function toggleMenu(menuId,event){event.stopPropagation();const menu=document.ge
 function closeAllMenus(){document.querySelectorAll('.dialect-menu').forEach(el=>el.classList.remove('show'));}
 
 function setupEventListeners(){
-    elements.btnEng.onclick=(e)=>toggleMenu('englishMenu',e);
-    elements.btnEsp.onclick=(e)=>toggleMenu('spanishMenu',e);
-    elements.btnNext.onclick=nextWord;
-    elements.btnPrev.onclick=prevWord;
-    elements.btnPlay.onclick=playAudio;
+    // KLUCZOWE POPRAWKI: Upewniamy się, że przypisujemy funkcje!
+    if(elements.btnEng) elements.btnEng.onclick=(e)=>toggleMenu('englishMenu',e);
+    if(elements.btnEsp) elements.btnEsp.onclick=(e)=>toggleMenu('spanishMenu',e);
+    if(elements.btnNext) elements.btnNext.onclick=nextWord;
+    if(elements.btnPrev) elements.btnPrev.onclick=prevWord; // <--- UŻYWAMY FUNKCJI prevWord
+    if(elements.btnPlay) elements.btnPlay.onclick=playAudio;
+    
     document.querySelectorAll('#englishMenu button').forEach(btn=>btn.onclick=()=>updateSection("EN",btn.dataset.dialect,true));
     document.querySelectorAll('#spanishMenu button').forEach(btn=>btn.onclick=()=>updateSection("ES",btn.dataset.dialect,true));
     window.onclick=()=>closeAllMenus();
