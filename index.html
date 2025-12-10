@@ -281,7 +281,7 @@ function init() {
 function updateSection(lang, dialect, shouldScroll=true){
     currentLanguage=lang;
     selectedDialect=dialect;
-    // W obecnej wersji tablica danych zawiera tylko słowa EN, więc filtrujemy je tylko, gdy lang="EN"
+    // W obecnej wersji tablica danych zawiera tylko słowa EN
     filteredWords = lang==="EN"?ALL_WORDS_DATA.slice():[];
     currentIndex=0;
     document.body.className=lang==="EN"?"english":"spanish";
@@ -315,30 +315,20 @@ function displayWord(index){
     },150);
 }
 
-function getAudioPath(word, lang, dialect) {
-    // Określa ścieżkę katalogu na podstawie języka i dialektu
-    let dialectFolder = '';
-    if (lang === "EN") {
-        dialectFolder = (dialect === "1") ? "en-us" : "en-uk";
-    } else if (lang === "ES") {
-        // Pamiętaj: te foldery muszą istnieć w Twoim repozytorium (np. audio/es-es)
-        dialectFolder = (dialect === "1") ? "es-es" : "es-mx";
-    }
-    
-    // Tworzy pełną ścieżkę do pliku MP3 (np. audio/en-us/budget.mp3)
-    return `audio/${dialectFolder}/${word.toLowerCase()}.mp3`;
-}
-
-
+// Zmieniona funkcja budowania ścieżki do audio (bazując na Twojej strukturze plików)
 function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
     
-    // Użycie dynamicznej ścieżki
-    const path = getAudioPath(data.word, currentLanguage, selectedDialect);
+    // Ścieżka bezpośrednio do pliku w folderze 'audio/'
+    const path = `audio/${data.word.toLowerCase()}.mp3`;
     
     const audio = new Audio(path);
-    audio.play().catch(err=>console.warn("Audio error (Brak pliku?):",path,err));
+    audio.play().catch(err=>{
+        console.warn("Błąd odtwarzania audio. Sprawdź, czy plik istnieje i jest dostępny:", path, err);
+        // Opcjonalnie: alert dla użytkownika, jeśli plik nie działa
+        // alert(`Brak pliku audio dla słowa: ${data.word}`); 
+    });
 }
 
 function nextWord(){if(filteredWords.length){currentIndex=(currentIndex+1)%filteredWords.length;displayWord(currentIndex);}}
@@ -352,7 +342,6 @@ function setupEventListeners(){
     elements.btnEsp.onclick=(e)=>toggleMenu('spanishMenu',e);
     elements.btnNext.onclick=nextWord;
     elements.btnPrev.onclick=prevWord;
-    // Przypisanie funkcji do przycisku odtwarzania audio
     elements.btnPlay.onclick=playAudio;
     document.querySelectorAll('#englishMenu button').forEach(btn=>btn.onclick=()=>updateSection("EN",btn.dataset.dialect,true));
     document.querySelectorAll('#spanishMenu button').forEach(btn=>btn.onclick=()=>updateSection("ES",btn.dataset.dialect,true));
