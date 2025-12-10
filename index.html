@@ -237,22 +237,43 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
-// Tablica z najczystszymi słowami, aby wykluczyć błąd formatowania
+// ZAKTUALIZOWANA TABLICA Z 34 SŁOWAMI I TRANSKRYPCJAMI Z CAMBRIDGE DICTIONARY
 const ALL_WORDS_DATA = [
+    { word:"approach", lang:"EN", ipa:"əˈproʊtʃ", ipa2:"əˈprəʊtʃ" },
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
+    { word:"call", lang:"EN", ipa:"kɔːl", ipa2:"kɔːl" },
+    { word:"change", lang:"EN", ipa:"tʃeɪndʒ", ipa2:"tʃeɪndʒ" },
     { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
-    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
-    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt" },
+    { word:"clarify", lang:"EN", ipa:"ˈklærəfaɪ", ipa2:"ˈklærəfaɪ" },
+    { word:"creative", lang:"EN", ipa:"kriˈeɪt̬ɪv", ipa2:"kriːˈeɪtɪv" },
+    { word:"dashboard", lang:"EN", ipa:"ˈdæʃbɔːrd", ipa2:"ˈdæʃbɔːd" },
+    { word:"design", lang:"EN", ipa:"dɪˈzaɪn", ipa2:"dɪˈzaɪn" },
+    { word:"digital", lang:"EN", ipa:"ˈdɪdʒət̬əl", ipa2:"ˈdɪdʒɪtəl" },
+    { word:"direct", lang:"EN", ipa:"dəˈrekt", ipa2:"daɪˈrekt" },
+    { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" },
+    { word:"diagnosis", lang:"EN", ipa:"ˌdaɪ.əɡˈnoʊ.sɪs", ipa2:"ˌdaɪ.əɡˈnəʊ.sɪs" },
     { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", ipa2:"ɪnˈɡeɪdʒmənt" },
-    { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
-    { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
-    { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", ipa2:"əbˈdʒektɪv" },
-    { word:"priorities", lang:"EN", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz" },
-    { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" },
-    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪəˌrɑːrki", ipa2:"ˈhaɪəˌrɑːrki" },
+    { word:"feedback", lang:"EN", ipa:"ˈfiːdbæk", ipa2:"ˈfiːdbæk" },
+    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪərɑːrki", ipa2:"ˈhaɪərɑːki" },
+    { word:"key", lang:"EN", ipa:"kiː", ipa2:"kiː" },
+    { word:"meeting", lang:"EN", ipa:"ˈmiːtɪŋ", ipa2:"ˈmiːtɪŋ" },
     { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
-    { word:"revenue", lang:"EN", ipa:"ˈrɛvəˌnjuː", ipa2:"ˈrɛvəˌnjuː" },
-    { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" }
+    { word:"networks", lang:"EN", ipa:"ˈnetwɝːk", ipa2:"ˈnetwɜːk" },
+    { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", ipa2:"əbˈdʒektɪv" },
+    { word:"optimize", lang:"EN", ipa:"ˈɑːptɪmaɪz", ipa2:"ˈɒptɪmaɪz" },
+    { word:"panel", lang:"EN", ipa:"ˈpænəl", ipa2:"ˈpænəl" },
+    { word:"performance", lang:"EN", ipa:"pɚˈfɔːrməns", ipa2:"pəˈfɔːməns" },
+    { word:"priorities", lang:"EN", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz" },
+    { word:"process", lang:"EN", ipa:"ˈprɑːses", ipa2:"ˈprəʊses" },
+    { word:"progress", lang:"EN", ipa:"ˈprɑːɡres", ipa2:"ˈprəʊɡres" },
+    { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
+    { word:"reach", lang:"EN", ipa:"riːtʃ", ipa2:"riːtʃ" },
+    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt" },
+    { word:"revenue", lang:"EN", ipa:"ˈrevənuː", ipa2:"ˈrevənjuː" },
+    { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
+    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
+    { word:"supervisor", lang:"EN", ipa:"ˈsuːpərvaɪzər", ipa2:"ˈsuːpəvaɪzə" },
+    { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" }
 ];
 
 let currentLanguage = "EN";
@@ -274,6 +295,8 @@ const elements = {
 const flashcardElement = document.querySelector('.flashcard');
 
 function init() {
+    // Sortowanie alfabetyczne dla lepszej nawigacji
+    ALL_WORDS_DATA.sort((a, b) => a.word.localeCompare(b.word));
     filteredWords = ALL_WORDS_DATA.slice();
     updateSection("EN","1",false);
     setupEventListeners();
@@ -286,7 +309,7 @@ function updateSection(lang, dialect, shouldScroll=true){
     currentIndex=0;
     document.body.className=lang==="EN"?"english":"spanish";
     elements.btnEng.classList.toggle('active',lang==="EN");
-    elements.btnEsp.classList.toggle('active',lang==="ES");
+    elements.btnEsp.classList.toggle('active',lang==="ES');
     closeAllMenus();
     displayWord(currentIndex);
     if(shouldScroll && flashcardElement) flashcardElement.scrollIntoView({behavior:'smooth',block:'start'});
@@ -314,29 +337,25 @@ function displayWord(index){
     },150);
 }
 
-// Zmodyfikowana funkcja playAudio z dodatkowym oczyszczeniem tekstu (trim)
+// Najczystsza funkcja budowania ścieżki (przywrócona do stabilnej formy)
 function playAudio(){
     if(!filteredWords.length) return;
+    const data = filteredWords[currentIndex];
     
-    // Używamy tekstu z elementu DOM, aby uniknąć problemów z tablicą danych
-    const currentWordText = elements.word.textContent;
-    
-    // Dodatkowo usuwamy wszelkie niewidzialne białe znaki z początku/końca słowa
-    const cleanedWord = currentWordText.trim(); 
-
-    if (cleanedWord === "Loading..." || cleanedWord === "No words") {
-        return; // Zabezpieczenie przed próbą odtworzenia słów w trakcie ładowania
-    }
-    
-    // Budowanie ścieżki
-    const path = `audio/${cleanedWord.toLowerCase()}.mp3`;
+    // Budowanie ścieżki: tylko toLowerCase() i trim()
+    const path = `audio/${data.word.toLowerCase().trim()}.mp3`;
     
     const audio = new Audio(path);
-    audio.play().catch(err=>{
-        // Jeśli błąd nadal występuje, prawie na pewno problem jest z plikiem:
-        // - Uszkodzony plik MP3 (nie jest poprawnym formatem)
-        // - Niewidoczne spacje/znaki w nazwie pliku na serwerze
-        console.warn("Błąd odtwarzania audio dla:", cleanedWord, ". Prawdopodobnie problem z plikiem na serwerze:", path);
+    
+    // Zabezpieczenie przed błędem ładowania pliku bez blokowania interfejsu
+    audio.onerror = function() {
+        console.error("Błąd ładowania pliku audio dla ścieżki:", path);
+        console.error("Sprawdź nazwę pliku w repozytorium (musi być małą literą!) oraz upewnij się, że plik jest sprawny.");
+    };
+
+    audio.play().catch(err => {
+        // Zabezpieczenie przed błędem autoodtwarzania w przeglądarce
+        console.warn("Błąd odtwarzania (poza ładowaniem pliku):", err);
     });
 }
 
