@@ -237,7 +237,7 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
-// ZAKTUALIZOWANA TABLICA Z 34 SŁOWAMI I TRANSKRYPCJAMI Z CAMBRIDGE DICTIONARY
+// ZAKTUALIZOWANA I SPRAWDZONA TABLICA Z 34 SŁOWAMI I TRANSKRYPCJAMI Z CAMBRIDGE DICTIONARY
 const ALL_WORDS_DATA = [
     { word:"approach", lang:"EN", ipa:"əˈproʊtʃ", ipa2:"əˈprəʊtʃ" },
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
@@ -295,9 +295,9 @@ const elements = {
 const flashcardElement = document.querySelector('.flashcard');
 
 function init() {
-    // Sortowanie alfabetyczne dla lepszej nawigacji
-    ALL_WORDS_DATA.sort((a, b) => a.word.localeCompare(b.word));
-    filteredWords = ALL_WORDS_DATA.slice();
+    // Kopiowanie i sortowanie danych na starcie
+    const sortedData = ALL_WORDS_DATA.slice().sort((a, b) => a.word.localeCompare(b.word));
+    filteredWords = sortedData;
     updateSection("EN","1",false);
     setupEventListeners();
 }
@@ -305,7 +305,8 @@ function init() {
 function updateSection(lang, dialect, shouldScroll=true){
     currentLanguage=lang;
     selectedDialect=dialect;
-    filteredWords = lang==="EN"?ALL_WORDS_DATA.slice():[];
+    // Ponowne sortowanie przy zmianie sekcji
+    filteredWords = lang==="EN"?ALL_WORDS_DATA.slice().sort((a, b) => a.word.localeCompare(b.word)):[];
     currentIndex=0;
     document.body.className=lang==="EN"?"english":"spanish";
     elements.btnEng.classList.toggle('active',lang==="EN");
@@ -337,12 +338,12 @@ function displayWord(index){
     },150);
 }
 
-// Najczystsza funkcja budowania ścieżki (przywrócona do stabilnej formy)
+// Funkcja playAudio (stabilna)
 function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
     
-    // Budowanie ścieżki: tylko toLowerCase() i trim()
+    // Budowanie ścieżki: kluczowe to toLowerCase()
     const path = `audio/${data.word.toLowerCase().trim()}.mp3`;
     
     const audio = new Audio(path);
