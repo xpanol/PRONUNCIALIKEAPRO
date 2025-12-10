@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>PRO!NUNCIA LIKE A PRO!</title>
 <link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet" />
 <style>
-/* TU WSZYSTKIE TWOJE STYLE - NIC NIE RUSZAJ */
+:root {
+    --bg-english: #111;
+    --text-english: white;
+    --accent-english: #F8AC10;
+    --bg-spanish: #F8AC10;
+    --text-spanish: black;
+    --accent-spanish: #D9171A;
+}
+
 body {
     font-family: 'Special Elite', monospace;
-    background-color: #111;
-    color: white;
+    background-color: var(--bg-english);
+    color: var(--text-english);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -18,33 +26,176 @@ body {
     min-height: 100vh;
     margin: 0;
     padding: 20px;
+    box-sizing: border-box;
     text-align: center;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    overflow-x: hidden;
 }
-body.spanish { background-color: #F8AC10; color: black; }
 
-h1 { margin:10px 0 30px 0; font-size: clamp(2rem, 5vw, 2.8em); }
-h1 span { display: block; font-size: 0.9em; margin-top:5px; }
+body.english { background-color: var(--bg-english); color: var(--text-english); }
+body.spanish { background-color: var(--bg-spanish); color: var(--text-spanish); }
 
-.language-switcher { margin-bottom: 30px; display: flex; gap:10px; justify-content:center; position:relative; }
-.lang-group { position:relative; }
+h1 {
+    margin: 10px 0 30px 0;
+    font-size: clamp(2rem, 5vw, 2.8em);
+    line-height: 1.1;
+    color: inherit;
+}
+h1 span { display: block; font-size: 0.9em; margin-top: 5px; opacity: 0.9; }
 
-.main-lang-btn { cursor:pointer; border:none; padding:10px 15px; font-size:1.1em; border-radius:8px; }
-.main-lang-btn.active { font-weight:bold; }
+.language-switcher { margin-bottom: 30px; position: relative; z-index: 100; display: flex; justify-content: center; gap: 10px; }
+.lang-group { position: relative; }
 
-.dialect-menu { display:none; position:absolute; top:110%; left:0; background:white; border:2px solid black; border-radius:8px; flex-direction:column; }
-.dialect-menu.show { display:flex; }
+.main-lang-btn {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 1.1em;
+    cursor: pointer;
+    font-family: 'Special Elite', monospace;
+    border-radius: 8px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+    height: 55px;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-lang-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
 
-.flashcard { display:flex; flex-direction:column; align-items:center; justify-content:center; margin-bottom:30px; }
-#currentWord { font-size:clamp(3.5rem,15vw,10em); }
-#phoneticTranscription { font-size:clamp(3rem,10vw,7em); font-weight:bold; min-height:1.2em; }
-#contextInfo { font-size:1.2em; opacity:0.8; background: rgba(0,0,0,0.1); padding:5px 15px; border-radius:20px; }
+#englishSectionButton.active, #englishSectionButton:hover { background-color: white; color: black; }
+#spanishSectionButton { background-color: var(--accent-english); color: black; }
+#spanishSectionButton.active, #spanishSectionButton:hover { background-color: var(--accent-spanish); color: white; }
 
-.button-group { display:flex; flex-direction:column; align-items:center; max-width:400px; width:100%; }
-.navigation-row { display:flex; justify-content:space-between; width:100%; gap:15px; }
-.control-btn { cursor:pointer; border-radius:8px; padding:10px; flex:1; }
-#playAudioButton { margin-bottom:15px; }
+.dialect-menu {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    flex-direction: column;
+    z-index: 101;
+}
+.dialect-menu.show { display: flex; animation: fadeIn 0.2s ease; }
 
-.spacer { height:10px; visibility:hidden; }
+.dialect-menu button {
+    width: 100%;
+    font-family: inherit;
+    font-size: 1em;
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 12px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    transition: background 0.2s;
+}
+.dialect-menu button:hover { background-color: #f0f0f0; font-weight: bold; }
+
+.flashcard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+#currentWord {
+    font-size: clamp(3.5rem, 15vw, 10em);
+    margin: 0 0 10px 0;
+    line-height: 1.1;
+    word-break: break-word;
+}
+
+#phoneticTranscription {
+    font-size: clamp(3rem, 10vw, 7em);
+    font-family: 'Courier New', monospace;
+    line-height: 1;
+    min-height: 1.2em;
+    font-weight: bold;
+    text-shadow: none;
+}
+
+#contextInfo {
+    font-size: 1.2em;
+    opacity: 0.8;
+    background: rgba(0,0,0,0.1);
+    padding: 5px 15px;
+    border-radius: 20px;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.navigation-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 15px;
+}
+
+.control-btn {
+    font-size: 1.2em;
+    font-family: 'Special Elite', monospace;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.control-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+
+#playAudioButton {
+    width: 100%;
+    font-size: 1.4em;
+    background-color: var(--accent-spanish);
+    color: white;
+    margin-bottom: 15px;
+    border: none;
+}
+#playAudioButton:hover { background-color: white; color: black; }
+
+.nav-btn { width: 48%; }
+body.english .nav-btn { background-color: var(--accent-english); color: black; }
+body.english .nav-btn:hover { background-color: white; }
+body.spanish .nav-btn { background-color: black; color: white; }
+body.spanish .nav-btn:hover { background-color: white; color: black; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+    .language-switcher { flex-direction: row; flex-wrap: wrap; }
+    .main-lang-btn { font-size: 1em; height: 50px; min-width: 120px; }
+    .control-btn { height: 50px; font-size: 1em; }
+}
+
+@media (orientation: landscape) {
+    #currentWord { font-size: clamp(1.75rem, 7.5vw, 5em); }
+    #phoneticTranscription { font-size: clamp(1.5rem, 5vw, 3.5em); }
+}
+
+.spacer { height: 10px; visibility: hidden; }
 </style>
 </head>
 <body class="english">
@@ -87,23 +238,21 @@ h1 span { display: block; font-size: 0.9em; margin-top:5px; }
 
 <script>
 const ALL_WORDS_DATA = [
-  { word:"budget", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
-  { word:"client", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
-  { word:"strategy", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
-  { word:"report", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt" },
-  { word:"engagement", ipa:"ɪnˈɡeɪdʒmənt", ipa2:"ɪnˈɡeɪdʒmənt" },
-  { word:"quarter", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
-  { word:"schedule", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
-  { word:"objective", ipa:"əbˈdʒektɪv", ipa2:"əbˈdʒektɪv" },
-  { word:"priorities", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz" },
-  { word:"thoroughly", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" },
-  { word:"hierarchy", ipa:"ˈhaɪəˌrɑːrki", ipa2:"ˈhaɪəˌrɑːrki" },
-  { word:"measure", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
-  { word:"revenue", ipa:"ˈrɛvəˌnjuː", ipa2:"ˈrɛvəˌnjuː" },
-  { word:"discount", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" }
+    { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
+    { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
+    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
+    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt" },
+    { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", ipa2:"ɪnˈɡeɪdʒmənt" },
+    { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
+    { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
+    { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", ipa2:"əbˈdʒektɪv" },
+    { word:"priorities", lang:"EN", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz" },
+    { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" },
+    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪəˌrɑːrki", ipa2:"ˈhaɪəˌrɑːrki" },
+    { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
+    { word:"revenue", lang:"EN", ipa:"ˈrɛvəˌnjuː", ipa2:"ˈrɛvəˌnjuː" },
+    { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" }
 ];
-
-const ALL_WORDS_DATA_ES = []; // hiszpańskie słowa bez audio
 
 let currentLanguage = "EN";
 let filteredWords = [];
@@ -121,17 +270,26 @@ const elements = {
     context: document.getElementById('contextInfo')
 };
 
+const flashcardElement = document.querySelector('.flashcard');
+
+function init() {
+    filteredWords = ALL_WORDS_DATA.slice();
+    updateSection("EN","1",false);
+    setupEventListeners();
+}
+
 function updateSection(lang, dialect, shouldScroll=true){
-    currentLanguage = lang;
-    selectedDialect = dialect;
-    filteredWords = lang==="EN"? ALL_WORDS_DATA.slice() : ALL_WORDS_DATA_ES.slice();
-    currentIndex = 0;
-    document.body.className = lang==="EN"? "english" : "spanish";
-    elements.btnEng.classList.toggle('active', lang==="EN");
-    elements.btnEsp.classList.toggle('active', lang==="ES");
+    currentLanguage=lang;
+    selectedDialect=dialect;
+    // W obecnej wersji tablica danych zawiera tylko słowa EN, więc filtrujemy je tylko, gdy lang="EN"
+    filteredWords = lang==="EN"?ALL_WORDS_DATA.slice():[];
+    currentIndex=0;
+    document.body.className=lang==="EN"?"english":"spanish";
+    elements.btnEng.classList.toggle('active',lang==="EN");
+    elements.btnEsp.classList.toggle('active',lang==="ES");
     closeAllMenus();
     displayWord(currentIndex);
-    if(shouldScroll) document.querySelector('.flashcard').scrollIntoView({behavior:'smooth'});
+    if(shouldScroll && flashcardElement) flashcardElement.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function displayWord(index){
@@ -141,37 +299,64 @@ function displayWord(index){
         elements.context.textContent="";
         return;
     }
-    const data = filteredWords[index];
-    elements.word.textContent = data.word;
-    const showSecondIPA = selectedDialect==="2" && data.ipa2;
-    elements.phonetic.textContent = showSecondIPA ? data.ipa2 : data.ipa;
-    elements.phonetic.style.color = currentLanguage==="EN"? "#F8AC10" : "white";
-    elements.context.textContent = (currentLanguage==="EN"?"English":"Español")+" | "+(selectedDialect==="1"?(currentLanguage==="EN"?"Gen. Am.":"Castilian"):(currentLanguage==="EN"?"UK-RP":"Lat. Am."));
+    const data=filteredWords[index];
+    elements.word.style.opacity=0;
+    setTimeout(()=>{
+        elements.word.textContent=data.word;
+        // Używa ipa2 tylko dla EN i dialektu 2 (UK-RP), jeśli ipa2 jest dostępne
+        const showSecondIPA = currentLanguage==="EN" && selectedDialect==="2" && data.ipa2;
+        elements.phonetic.textContent = showSecondIPA?data.ipa2:data.ipa;
+        elements.phonetic.style.color = currentLanguage==="EN"?"#F8AC10":"white";
+        elements.phonetic.style.textShadow=currentLanguage==="EN"?"none":"2px 2px 4px rgba(0,0,0,0.7)";
+        elements.word.style.opacity=1;
+        const langName=currentLanguage==="EN"?"English":"Español";
+        const dialectName=currentLanguage==="EN"?(selectedDialect==="1"?"Gen. Am.":"UK-RP"):(selectedDialect==="1"?"Castilian":"Lat. Am.");
+        elements.context.textContent=langName+" | "+dialectName;
+    },150);
 }
+
+function getAudioPath(word, lang, dialect) {
+    // Określa ścieżkę katalogu na podstawie języka i dialektu
+    let dialectFolder = '';
+    if (lang === "EN") {
+        dialectFolder = (dialect === "1") ? "en-us" : "en-uk";
+    } else if (lang === "ES") {
+        // Pamiętaj: te foldery muszą istnieć w Twoim repozytorium (np. audio/es-es)
+        dialectFolder = (dialect === "1") ? "es-es" : "es-mx";
+    }
+    
+    // Tworzy pełną ścieżkę do pliku MP3 (np. audio/en-us/budget.mp3)
+    return `audio/${dialectFolder}/${word.toLowerCase()}.mp3`;
+}
+
 
 function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
-    const path = `audio/${data.word.toLowerCase()}.mp3`;
+    
+    // Użycie dynamicznej ścieżki
+    const path = getAudioPath(data.word, currentLanguage, selectedDialect);
+    
     const audio = new Audio(path);
-    audio.play().catch(err=>console.warn("Audio error:", path, err));
+    audio.play().catch(err=>console.warn("Audio error (Brak pliku?):",path,err));
 }
 
-function nextWord(){ if(filteredWords.length){ currentIndex=(currentIndex+1)%filteredWords.length; displayWord(currentIndex); } }
-function prevWord(){ if(filteredWords.length){ currentIndex=(currentIndex-1+filteredWords.length)%filteredWords.length; displayWord(currentIndex); } }
+function nextWord(){if(filteredWords.length){currentIndex=(currentIndex+1)%filteredWords.length;displayWord(currentIndex);}}
+function prevWord(){if(filteredWords.length){currentIndex=(currentIndex-1+filteredWords.length)%filteredWords.length;displayWord(currentIndex);}}
 
-function toggleMenu(menuId,e){ e.stopPropagation(); const menu=document.getElementById(menuId); const show=menu.classList.contains('show'); closeAllMenus(); if(!show) menu.classList.add('show'); }
-function closeAllMenus(){ document.querySelectorAll('.dialect-menu').forEach(el=>el.classList.remove('show')); }
+function toggleMenu(menuId,event){event.stopPropagation();const menu=document.getElementById(menuId);const isVisible=menu.classList.contains('show');closeAllMenus();if(!isVisible) menu.classList.add('show');}
+function closeAllMenus(){document.querySelectorAll('.dialect-menu').forEach(el=>el.classList.remove('show'));}
 
 function setupEventListeners(){
     elements.btnEng.onclick=(e)=>toggleMenu('englishMenu',e);
     elements.btnEsp.onclick=(e)=>toggleMenu('spanishMenu',e);
     elements.btnNext.onclick=nextWord;
     elements.btnPrev.onclick=prevWord;
+    // Przypisanie funkcji do przycisku odtwarzania audio
     elements.btnPlay.onclick=playAudio;
     document.querySelectorAll('#englishMenu button').forEach(btn=>btn.onclick=()=>updateSection("EN",btn.dataset.dialect,true));
     document.querySelectorAll('#spanishMenu button').forEach(btn=>btn.onclick=()=>updateSection("ES",btn.dataset.dialect,true));
-    window.onclick=closeAllMenus;
+    window.onclick=()=>closeAllMenus();
     document.addEventListener('keydown',e=>{
         if(e.code==='Space'||e.key===' '){ e.preventDefault(); playAudio(); }
         if(e.key==='ArrowRight') nextWord();
@@ -179,10 +364,7 @@ function setupEventListeners(){
     });
 }
 
-// start
-updateSection("EN","1",false);
-setupEventListeners();
+init();
 </script>
-
 </body>
 </html>
