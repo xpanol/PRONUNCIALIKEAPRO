@@ -7,6 +7,196 @@
 <link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet" />
 <style>
 /* TU WSZYSTKIE TWOJE STYLE - NIC NIE RUSZAJ */
+:root {
+    --bg-english: #111;
+    --text-english: white;
+    --accent-english: #F8AC10;
+    --bg-spanish: #F8AC10;
+    --text-spanish: black;
+    --accent-spanish: #D9171A;
+}
+
+body {
+    font-family: 'Special Elite', monospace;
+    background-color: var(--bg-english);
+    color: var(--text-english);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    transition: background-color 0.5s ease, color 0.5s ease;
+    overflow-x: hidden;
+}
+
+body.english { background-color: var(--bg-english); color: var(--text-english); }
+body.spanish { background-color: var(--bg-spanish); color: var(--text-spanish); }
+
+h1 {
+    margin: 10px 0 30px 0;
+    font-size: clamp(2rem, 5vw, 2.8em);
+    line-height: 1.1;
+    color: inherit;
+}
+h1 span { display: block; font-size: 0.9em; margin-top: 5px; opacity: 0.9; }
+
+.language-switcher { margin-bottom: 30px; position: relative; z-index: 100; display: flex; justify-content: center; gap: 10px; }
+.lang-group { position: relative; }
+
+.main-lang-btn {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 1.1em;
+    cursor: pointer;
+    font-family: 'Special Elite', monospace;
+    border-radius: 8px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+    height: 55px;
+    min-width: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.main-lang-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+
+#englishSectionButton.active, #englishSectionButton:hover { background-color: white; color: black; }
+#spanishSectionButton { background-color: var(--accent-english); color: black; }
+#spanishSectionButton.active, #spanishSectionButton:hover { background-color: var(--accent-spanish); color: white; }
+
+.dialect-menu {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    flex-direction: column;
+    z-index: 101;
+}
+.dialect-menu.show { display: flex; animation: fadeIn 0.2s ease; }
+
+.dialect-menu button {
+    width: 100%;
+    font-family: inherit;
+    font-size: 1em;
+    border: none;
+    border-bottom: 1px solid #eee;
+    padding: 12px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    transition: background 0.2s;
+}
+.dialect-menu button:hover { background-color: #f0f0f0; font-weight: bold; }
+
+.flashcard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+#currentWord {
+    font-size: clamp(3.5rem, 15vw, 10em);
+    margin: 0 0 10px 0;
+    line-height: 1.1;
+    word-break: break-word;
+}
+
+#phoneticTranscription {
+    font-size: clamp(3rem, 10vw, 7em);
+    font-family: 'Courier New', monospace;
+    line-height: 1;
+    min-height: 1.2em;
+    font-weight: bold;
+    text-shadow: none;
+}
+
+#contextInfo {
+    font-size: 1.2em;
+    opacity: 0.8;
+    background: rgba(0,0,0,0.1);
+    padding: 5px 15px;
+    border-radius: 20px;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.navigation-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 15px;
+}
+
+.control-btn {
+    font-size: 1.2em;
+    font-family: 'Special Elite', monospace;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.control-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+
+#playAudioButton {
+    width: 100%;
+    font-size: 1.4em;
+    background-color: var(--accent-spanish);
+    color: white;
+    margin-bottom: 15px;
+    border: none;
+}
+#playAudioButton:hover { background-color: white; color: black; }
+
+.nav-btn { width: 48%; }
+body.english .nav-btn { background-color: var(--accent-english); color: black; }
+body.english .nav-btn:hover { background-color: white; }
+body.spanish .nav-btn { background-color: black; color: white; }
+body.spanish .nav-btn:hover { background-color: white; color: black; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+    .language-switcher { flex-direction: row; flex-wrap: wrap; }
+    .main-lang-btn { font-size: 1em; height: 50px; min-width: 120px; }
+    .control-btn { height: 50px; font-size: 1em; }
+}
+
+@media (orientation: landscape) {
+    #currentWord { font-size: clamp(1.75rem, 7.5vw, 5em); }
+    #phoneticTranscription { font-size: clamp(1.5rem, 5vw, 3.5em); }
+}
+
+.spacer { height: 10px; visibility: hidden; }
 </style>
 </head>
 <body class="english">
@@ -62,7 +252,7 @@ const ALL_WORDS_DATA_BASE = [
     { word:"hierarchy", lang:"EN", ipa:"ˈhaɪəˌrɑːrki", ipa2:"ˈhaɪəˌrɑːrki" },
     { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
     { word:"revenue", lang:"EN", ipa:"ˈrɛvəˌnjuː", ipa2:"ˈrɛvəˌnjuː" },
-    { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" } // nowy dodany
+    { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" }
 ];
 
 const ALL_WORDS_DATA_ES_BASE = [
@@ -141,9 +331,8 @@ function buildWordsFromFiles(files) {
         if(base) result.push(Object.assign({}, base));
         else result.push({word:w, lang:"EN", ipa:"", ipa2:""});
     });
-    if(result.length===0) ALL_WORDS_DATA = ALL_WORDS_DATA_BASE.slice();
-    else ALL_WORDS_DATA = result;
-    ALL_WORDS_DATA_ES = ALL_WORDS_DATA_ES_BASE.slice(); // hiszpańskie słowa statyczne
+    ALL_WORDS_DATA = result.length ? result : ALL_WORDS_DATA_BASE.slice();
+    ALL_WORDS_DATA_ES = ALL_WORDS_DATA_ES_BASE.slice();
 }
 
 function updateSection(lang, dialect, shouldScroll = true) {
@@ -187,7 +376,9 @@ function playAudio() {
     const baseName = data.word.toLowerCase();
     const path = `audio/${baseName}.mp3`;
     const audio = new Audio(path);
-    audio.play().catch(err=>console.warn("Audio error", path, err));
+    audio.play().catch(err=>{
+        console.warn("Audio not found for", baseName, path);
+    });
 }
 
 function nextWord() { if(filteredWords.length) {currentIndex=(currentIndex+1)%filteredWords.length; displayWord(currentIndex);} }
