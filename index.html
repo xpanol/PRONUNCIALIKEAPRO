@@ -6,7 +6,6 @@
 <title>PRO!NUNCIA LIKE A PRO!</title>
 <link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet" />
 <style>
-/* CSS pozostaje bez zmian */
 :root {
     --bg-english: #111;
     --text-english: white;
@@ -238,10 +237,21 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
-// MINIMALNA I BEZPIECZNA TABLICA DANYCH
 const ALL_WORDS_DATA = [
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
-    { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" }
+    { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
+    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
+    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt" },
+    { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", ipa2:"ɪnˈɡeɪdʒmənt" },
+    { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
+    { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
+    { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", ipa2:"əbˈdʒektɪv" },
+    { word:"priorities", lang:"EN", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz" },
+    { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" },
+    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪəˌrɑːrki", ipa2:"ˈhaɪəˌrɑːrki" },
+    { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
+    { word:"revenue", lang:"EN", ipa:"ˈrɛvəˌnjuː", ipa2:"ˈrɛvəˌnjuː" },
+    { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" }
 ];
 
 let currentLanguage = "EN";
@@ -250,7 +260,7 @@ let currentIndex = 0;
 let selectedDialect = "1";
 
 const elements = {
-    word: document.getElementById('currentWord'), 
+    word: document.getElementById('currentWord'),
     phonetic: document.getElementById('phoneticTranscription'),
     btnPlay: document.getElementById('playAudioButton'),
     btnNext: document.getElementById('nextButton'),
@@ -262,14 +272,8 @@ const elements = {
 
 const flashcardElement = document.querySelector('.flashcard');
 
-// Funkcja odpowiedzialna za inicjalizację
 function init() {
-    if (!elements.word || ALL_WORDS_DATA.length === 0) {
-        if (elements.word) elements.word.textContent = "Brak słów do załadowania.";
-        return; 
-    }
-    
-    filteredWords = ALL_WORDS_DATA.slice();
+    filteredWords = ALL_WORDS_DATA.slice(); 
     updateSection("EN","1",false);
     setupEventListeners();
 }
@@ -281,15 +285,13 @@ function updateSection(lang, dialect, shouldScroll=true){
     currentIndex=0;
     document.body.className=lang==="EN"?"english":"spanish";
     elements.btnEng.classList.toggle('active',lang==="EN");
-    elements.btnEsp.classList.toggle('active',lang==="ES');
+    elements.btnEsp.classList.toggle('active',lang==="ES");
     closeAllMenus();
     displayWord(currentIndex);
     if(shouldScroll && flashcardElement) flashcardElement.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function displayWord(index){
-    if(!elements.word) return; 
-
     if(!filteredWords.length){
         elements.word.textContent="No words";
         elements.phonetic.textContent="";
@@ -300,7 +302,7 @@ function displayWord(index){
     elements.word.style.opacity=0;
     setTimeout(()=>{
         elements.word.textContent=data.word;
-        const showSecondIPA = currentLanguage==="EN" && selectedDialect==="2" && data.ipa2;
+        const showSecondIPA = selectedDialect==="2" && data.ipa2;
         elements.phonetic.textContent = showSecondIPA?data.ipa2:data.ipa;
         elements.phonetic.style.color = currentLanguage==="EN"?"#F8AC10":"white";
         elements.phonetic.style.textShadow=currentLanguage==="EN"?"none":"2px 2px 4px rgba(0,0,0,0.7)";
@@ -311,21 +313,12 @@ function displayWord(index){
     },150);
 }
 
-// Funkcja playAudio
 function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
-    const path = `audio/${data.word.toLowerCase().trim()}.mp3`;
+    const path = `audio/${data.word.toLowerCase()}.mp3`;
     const audio = new Audio(path);
-    
-    audio.onerror = function() {
-        console.error("Błąd ładowania pliku audio dla ścieżki:", path);
-        console.error("Sprawdź nazwę pliku.");
-    };
-
-    audio.play().catch(err => {
-        console.warn("Błąd odtwarzania:", err);
-    });
+    audio.play().catch(err=>console.warn("Audio error",path,err));
 }
 
 function nextWord(){if(filteredWords.length){currentIndex=(currentIndex+1)%filteredWords.length;displayWord(currentIndex);}}
@@ -335,13 +328,11 @@ function toggleMenu(menuId,event){event.stopPropagation();const menu=document.ge
 function closeAllMenus(){document.querySelectorAll('.dialect-menu').forEach(el=>el.classList.remove('show'));}
 
 function setupEventListeners(){
-    // KLUCZOWE POPRAWKI: Upewniamy się, że przypisujemy funkcje!
-    if(elements.btnEng) elements.btnEng.onclick=(e)=>toggleMenu('englishMenu',e);
-    if(elements.btnEsp) elements.btnEsp.onclick=(e)=>toggleMenu('spanishMenu',e);
-    if(elements.btnNext) elements.btnNext.onclick=nextWord;
-    if(elements.btnPrev) elements.btnPrev.onclick=prevWord; // <--- UŻYWAMY FUNKCJI prevWord
-    if(elements.btnPlay) elements.btnPlay.onclick=playAudio;
-    
+    elements.btnEng.onclick=(e)=>toggleMenu('englishMenu',e);
+    elements.btnEsp.onclick=(e)=>toggleMenu('spanishMenu',e);
+    elements.btnNext.onclick=nextWord;
+    elements.btnPrev.onclick=prevWord;
+    elements.btnPlay.onclick=playAudio;
     document.querySelectorAll('#englishMenu button').forEach(btn=>btn.onclick=()=>updateSection("EN",btn.dataset.dialect,true));
     document.querySelectorAll('#spanishMenu button').forEach(btn=>btn.onclick=()=>updateSection("ES",btn.dataset.dialect,true));
     window.onclick=()=>closeAllMenus();
