@@ -238,6 +238,7 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
+// Lista bazowa słów EN
 const ALL_WORDS_DATA_BASE = [
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
     { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
@@ -255,6 +256,7 @@ const ALL_WORDS_DATA_BASE = [
     { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" }
 ];
 
+// Lista bazowa słów ES
 const ALL_WORDS_DATA_ES_BASE = [
     { word:"presupuesto", lang:"ES", ipa:"preθuˈpweθto", ipa2:"preθuˈpweθto" },
     { word:"cliente", lang:"ES", ipa:"ˈkljente", ipa2:"ˈkljente" },
@@ -265,7 +267,6 @@ const ALL_WORDS_DATA_ES_BASE = [
 
 let ALL_WORDS_DATA = [];
 let ALL_WORDS_DATA_ES = [];
-
 let currentLanguage = "EN";
 let filteredWords = [];
 let currentIndex = 0;
@@ -284,6 +285,7 @@ const elements = {
 
 const flashcardElement = document.querySelector('.flashcard');
 
+// inicjalizacja
 function init() {
     loadAudioIndex()
       .then(files => {
@@ -300,6 +302,7 @@ function init() {
       });
 }
 
+// pobierz listę mp3
 function loadAudioIndex() {
     return fetch('audio/audio_index.json', {cache: "no-store"})
         .then(r => { if(!r.ok) throw new Error(); return r.json(); })
@@ -307,18 +310,22 @@ function loadAudioIndex() {
         .catch(_ => fetch('audio/list.php', {cache: "no-store"}).then(r=>r.json()));
 }
 
+// wyczyszczenie nazwy pliku
 function sanitizeFileName(filename) {
     return filename.split('/').pop().split('?')[0];
 }
 
+// zamiana na słowo
 function nameToWord(filename) {
     return sanitizeFileName(filename).replace(/\.mp3$/i, '');
 }
 
+// dopasowanie bazy dla słowa EN
 function findBaseDataForWord(word) {
     return ALL_WORDS_DATA_BASE.find(w => w.word.toLowerCase() === word.toLowerCase());
 }
 
+// budowanie listy słów
 function buildWordsFromFiles(files) {
     const normalized = files.map(sanitizeFileName).filter(f=>/\.mp3$/i.test(f));
     const seen = new Set();
@@ -331,10 +338,12 @@ function buildWordsFromFiles(files) {
         if(base) result.push(Object.assign({}, base));
         else result.push({word:w, lang:"EN", ipa:"", ipa2:""});
     });
-    ALL_WORDS_DATA = result.length ? result : ALL_WORDS_DATA_BASE.slice();
-    ALL_WORDS_DATA_ES = ALL_WORDS_DATA_ES_BASE.slice();
+    if(result.length===0) ALL_WORDS_DATA = ALL_WORDS_DATA_BASE.slice();
+    else ALL_WORDS_DATA = result;
+    ALL_WORDS_DATA_ES = ALL_WORDS_DATA_ES_BASE.slice(); // hiszpańskie słowa statyczne
 }
 
+// aktualizacja sekcji
 function updateSection(lang, dialect, shouldScroll = true) {
     currentLanguage = lang;
     selectedDialect = dialect;
@@ -348,6 +357,7 @@ function updateSection(lang, dialect, shouldScroll = true) {
     if(shouldScroll && flashcardElement) flashcardElement.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
+// wyświetlanie słowa
 function displayWord(index) {
     if(!filteredWords.length){
         elements.word.textContent="No words";
@@ -370,23 +380,25 @@ function displayWord(index) {
     },150);
 }
 
+// odtwarzanie audio
 function playAudio() {
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
     const baseName = data.word.toLowerCase();
     const path = `audio/${baseName}.mp3`;
     const audio = new Audio(path);
-    audio.play().catch(err=>{
-        console.warn("Audio not found for", baseName, path);
-    });
+    audio.play().catch(err=>console.warn("Audio error", path, err));
 }
 
+// nawigacja
 function nextWord() { if(filteredWords.length) {currentIndex=(currentIndex+1)%filteredWords.length; displayWord(currentIndex);} }
 function prevWord() { if(filteredWords.length) {currentIndex=(currentIndex-1+filteredWords.length)%filteredWords.length; displayWord(currentIndex);} }
 
+// menu
 function toggleMenu(menuId,event){ event.stopPropagation(); const menu=document.getElementById(menuId); const isVisible=menu.classList.contains('show'); closeAllMenus(); if(!isVisible) menu.classList.add('show'); }
 function closeAllMenus(){ document.querySelectorAll('.dialect-menu').forEach(el=>el.classList.remove('show')); }
 
+// event listeners
 function setupEventListeners(){
     elements.btnEng.onclick=(e)=>toggleMenu('englishMenu',e);
     elements.btnEsp.onclick=(e)=>toggleMenu('spanishMenu',e);
