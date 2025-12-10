@@ -238,24 +238,25 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
-const ALL_WORDS_DATA_BASE = [
-    { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
-    { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
-    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
-    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt" },
-    { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", ipa2:"ɪnˈɡeɪdʒmənt" },
-    { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
-    { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
-    { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", ipa2:"əbˈdʒektɪv" },
-    { word:"priorities", lang:"EN", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz" },
-    { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" },
-    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪəˌrɑːrki", ipa2:"ˈhaɪəˌrɑːrki" },
-    { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
-    { word:"revenue", lang:"EN", ipa:"ˈrɛvəˌnjuː", ipa2:"ˈrɛvəˌnjuː" },
-    { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" }
+const ALL_WORDS_DATA = [
+  { word:"budget", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
+  { word:"client", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
+  { word:"strategy", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
+  { word:"report", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt" },
+  { word:"engagement", ipa:"ɪnˈɡeɪdʒmənt", ipa2:"ɪnˈɡeɪdʒmənt" },
+  { word:"quarter", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
+  { word:"schedule", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
+  { word:"objective", ipa:"əbˈdʒektɪv", ipa2:"əbˈdʒektɪv" },
+  { word:"priorities", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz" },
+  { word:"thoroughly", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" },
+  { word:"hierarchy", ipa:"ˈhaɪəˌrɑːrki", ipa2:"ˈhaɪəˌrɑːrki" },
+  { word:"measure", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
+  { word:"revenue", ipa:"ˈrɛvəˌnjuː", ipa2:"ˈrɛvəˌnjuː" },
+  { word:"discount", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" }
 ];
 
-let ALL_WORDS_DATA = [];
+const ALL_WORDS_DATA_ES = []; // hiszpańskie słowa nie mają audio
+
 let currentLanguage = "EN";
 let filteredWords = [];
 let currentIndex = 0;
@@ -274,18 +275,12 @@ const elements = {
 
 const flashcardElement = document.querySelector('.flashcard');
 
-function init() {
-    ALL_WORDS_DATA = ALL_WORDS_DATA_BASE.slice(); // wszystkie słowa zawsze
-    updateSection("EN", "1", false);
-    setupEventListeners();
-}
-
-function updateSection(lang, dialect, shouldScroll = true) {
+function updateSection(lang, dialect, shouldScroll=true){
     currentLanguage = lang;
     selectedDialect = dialect;
-    filteredWords = lang==="EN" ? ALL_WORDS_DATA.slice() : []; // hiszpańska pusta
+    filteredWords = lang==="EN"? ALL_WORDS_DATA.slice() : ALL_WORDS_DATA_ES.slice();
     currentIndex = 0;
-    document.body.className = lang==="EN" ? "english" : "spanish";
+    document.body.className = lang==="EN"? "english" : "spanish";
     elements.btnEng.classList.toggle('active', lang==="EN");
     elements.btnEsp.classList.toggle('active', lang==="ES");
     closeAllMenus();
@@ -293,7 +288,7 @@ function updateSection(lang, dialect, shouldScroll = true) {
     if(shouldScroll && flashcardElement) flashcardElement.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-function displayWord(index) {
+function displayWord(index){
     if(!filteredWords.length){
         elements.word.textContent="No words";
         elements.phonetic.textContent="";
@@ -305,9 +300,9 @@ function displayWord(index) {
     setTimeout(()=>{
         elements.word.textContent=data.word;
         const showSecondIPA = selectedDialect==="2" && data.ipa2;
-        elements.phonetic.textContent = showSecondIPA ? data.ipa2 : data.ipa;
-        elements.phonetic.style.color = currentLanguage==="EN" ? "#F8AC10" : "white";
-        elements.phonetic.style.textShadow = currentLanguage==="EN" ? "none" : "2px 2px 4px rgba(0,0,0,0.7)";
+        elements.phonetic.textContent = showSecondIPA? data.ipa2 : data.ipa;
+        elements.phonetic.style.color = currentLanguage==="EN"? "#F8AC10" : "#111"; // zachowuje Twój kolor
+        elements.phonetic.style.textShadow = currentLanguage==="EN"? "none" : "2px 2px 4px rgba(0,0,0,0.7)";
         elements.word.style.opacity=1;
         const langName = currentLanguage==="EN"?"English":"Español";
         const dialectName = currentLanguage==="EN"?(selectedDialect==="1"?"Gen. Am.":"UK-RP"):(selectedDialect==="1"?"Castilian":"Lat. Am.");
@@ -315,16 +310,17 @@ function displayWord(index) {
     },150);
 }
 
-function playAudio() {
+function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
-    const path = `audio/${data.word}.mp3`;
+    const baseName = data.word.toLowerCase();
+    const path = `audio/${baseName}.mp3`;
     const audio = new Audio(path);
-    audio.play().catch(err => console.warn("Audio error:", path, err));
+    audio.play().catch(err=>console.warn("Audio error:", path, err));
 }
 
-function nextWord() { if(filteredWords.length) {currentIndex=(currentIndex+1)%filteredWords.length; displayWord(currentIndex);} }
-function prevWord() { if(filteredWords.length) {currentIndex=(currentIndex-1+filteredWords.length)%filteredWords.length; displayWord(currentIndex);} }
+function nextWord(){ if(filteredWords.length){ currentIndex=(currentIndex+1)%filteredWords.length; displayWord(currentIndex); } }
+function prevWord(){ if(filteredWords.length){ currentIndex=(currentIndex-1+filteredWords.length)%filteredWords.length; displayWord(currentIndex); } }
 
 function toggleMenu(menuId,event){ event.stopPropagation(); const menu=document.getElementById(menuId); const isVisible=menu.classList.contains('show'); closeAllMenus(); if(!isVisible) menu.classList.add('show'); }
 function closeAllMenus(){ document.querySelectorAll('.dialect-menu').forEach(el=>el.classList.remove('show')); }
@@ -339,13 +335,16 @@ function setupEventListeners(){
     document.querySelectorAll('#spanishMenu button').forEach(btn=>btn.onclick=()=>updateSection("ES",btn.dataset.dialect,true));
     window.onclick=()=>closeAllMenus();
     document.addEventListener('keydown',e=>{
-        if(e.code==='Space'||e.key===' ') { e.preventDefault(); playAudio(); }
+        if(e.code==='Space'||e.key===' '){ e.preventDefault(); playAudio(); }
         if(e.key==='ArrowRight') nextWord();
         if(e.key==='ArrowLeft') prevWord();
     });
 }
 
-init();
+// inicjalizacja
+updateSection("EN","1",false);
+setupEventListeners();
 </script>
+
 </body>
 </html>
