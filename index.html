@@ -6,7 +6,6 @@
 <title>PRO!NUNCIA LIKE A PRO!</title>
 <link href="https://fonts.googleapis.com/css?family=Special+Elite&display=swap" rel="stylesheet" />
 <style>
-/* TU WSZYSTKIE TWOJE STYLE - NIC NIE RUSZAJ */
 :root {
     --bg-english: #111;
     --text-english: white;
@@ -239,6 +238,7 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 
 <script>
 const ALL_WORDS_DATA_BASE = [
+    { word:"revenue", lang:"EN", ipa:"ˈrɛvəˌnjuː", ipa2:"ˈrɛvəˌnjuː" },
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
     { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
     { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
@@ -251,7 +251,6 @@ const ALL_WORDS_DATA_BASE = [
     { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" },
     { word:"hierarchy", lang:"EN", ipa:"ˈhaɪəˌrɑːrki", ipa2:"ˈhaɪəˌrɑːrki" },
     { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
-    { word:"revenue", lang:"EN", ipa:"ˈrɛvəˌnjuː", ipa2:"ˈrɛvəˌnjuː" },
     { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" }
 ];
 
@@ -275,65 +274,30 @@ const elements = {
 const flashcardElement = document.querySelector('.flashcard');
 
 function init() {
-    fetchAudioFiles();
+    // pełna lista wszystkich słów z katalogu audio
+    ALL_WORDS_DATA = ALL_WORDS_DATA_BASE.slice();
+    updateSection("EN","1",false);
     setupEventListeners();
 }
 
-function fetchAudioFiles() {
-    // automatycznie pobieramy wszystkie pliki mp3 z katalogu audio/
-    // ponieważ nie mamy JSON ani list.php – zakładamy, że serwer może zwrócić listę katalogu w formacie .html
-    fetch('audio/')
-        .then(r => r.text())
-        .then(txt => {
-            const files = Array.from(txt.matchAll(/href="([^"]+\.mp3)"/gi)).map(m => m[1]);
-            buildWordsFromFiles(files);
-            updateSection("EN", "1", false);
-        })
-        .catch(err => {
-            console.warn("Fallback: używam wbudowanej listy", err);
-            ALL_WORDS_DATA = ALL_WORDS_DATA_BASE.slice();
-            updateSection("EN", "1", false);
-        });
-}
-
-function sanitizeFileName(filename){ return filename.split('/').pop().split('?')[0]; }
-function nameToWord(filename){ return sanitizeFileName(filename).replace(/\.mp3$/i,''); }
-function findBaseDataForWord(word){ return ALL_WORDS_DATA_BASE.find(w=>w.word.toLowerCase()===word.toLowerCase()); }
-
-function buildWordsFromFiles(files){
-    const normalized = files.map(sanitizeFileName).filter(f=>/\.mp3$/i.test(f));
-    const seen = new Set();
-    const result = [];
-    normalized.forEach(f=>{
-        const w = nameToWord(f);
-        if(seen.has(w.toLowerCase())) return;
-        seen.add(w.toLowerCase());
-        const base = findBaseDataForWord(w);
-        if(base) result.push(Object.assign({}, base));
-        else result.push({word:w, lang:"EN", ipa:"", ipa2:""});
-    });
-    if(result.length===0) ALL_WORDS_DATA = ALL_WORDS_DATA_BASE.slice();
-    else ALL_WORDS_DATA = result;
-}
-
-function updateSection(lang,dialect,shouldScroll=true){
+function updateSection(lang, dialect, shouldScroll = true) {
     currentLanguage = lang;
     selectedDialect = dialect;
-    filteredWords = ALL_WORDS_DATA.slice();
+    filteredWords = lang==="EN" ? ALL_WORDS_DATA.slice() : [];
     currentIndex = 0;
     document.body.className = lang==="EN"?"english":"spanish";
     elements.btnEng.classList.toggle('active', lang==="EN");
     elements.btnEsp.classList.toggle('active', lang==="ES");
     closeAllMenus();
     displayWord(currentIndex);
-    if(shouldScroll && flashcardElement) flashcardElement.scrollIntoView({behavior:'smooth',block:'start'});
+    if(shouldScroll && flashcardElement) flashcardElement.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-function displayWord(index){
+function displayWord(index) {
     if(!filteredWords.length){
         elements.word.textContent="No words";
         elements.phonetic.textContent="";
-        elements.context.textContent="";
+        elements.context.textContent=currentLanguage==="EN"?"English":"Español";
         return;
     }
     const data = filteredWords[index];
@@ -341,17 +305,17 @@ function displayWord(index){
     setTimeout(()=>{
         elements.word.textContent=data.word;
         const showSecondIPA = selectedDialect==="2" && data.ipa2;
-        elements.phonetic.textContent = showSecondIPA?data.ipa2:data.ipa;
-        elements.phonetic.style.color = currentLanguage==="EN"?"#F8AC10":"white";
-        elements.phonetic.style.textShadow = currentLanguage==="EN"?"none":"2px 2px 4px rgba(0,0,0,0.7)";
+        elements.phonetic.textContent = showSecondIPA ? data.ipa2 : data.ipa;
+        elements.phonetic.style.color = currentLanguage==="EN" ? "#F8AC10" : "white";
+        elements.phonetic.style.textShadow = currentLanguage==="EN" ? "none" : "2px 2px 4px rgba(0,0,0,0.7)";
         elements.word.style.opacity=1;
         const langName = currentLanguage==="EN"?"English":"Español";
-        const dialectName = currentLanguage==="EN"?(selectedDialect==="1"?"Gen. Am.":"UK-RP"):(selectedDialect==="1"?"Castilian":"Lat. Am.");
-        elements.context.textContent=langName+" | "+dialectName;
+        const dialectName = currentLanguage==="EN"?(selectedDialect==="1"?"Gen. Am.":"UK-RP"):"";
+        elements.context.textContent=langName + (dialectName? " | "+dialectName:"");
     },150);
 }
 
-function playAudio(){
+function playAudio() {
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
     const baseName = data.word.toLowerCase();
@@ -360,8 +324,8 @@ function playAudio(){
     audio.play().catch(err=>console.warn("Audio error", path, err));
 }
 
-function nextWord(){ if(filteredWords.length){currentIndex=(currentIndex+1)%filteredWords.length; displayWord(currentIndex);} }
-function prevWord(){ if(filteredWords.length){currentIndex=(currentIndex-1+filteredWords.length)%filteredWords.length; displayWord(currentIndex);} }
+function nextWord() { if(filteredWords.length){currentIndex=(currentIndex+1)%filteredWords.length; displayWord(currentIndex);} }
+function prevWord() { if(filteredWords.length){currentIndex=(currentIndex-1+filteredWords.length)%filteredWords.length; displayWord(currentIndex);} }
 
 function toggleMenu(menuId,event){ event.stopPropagation(); const menu=document.getElementById(menuId); const isVisible=menu.classList.contains('show'); closeAllMenus(); if(!isVisible) menu.classList.add('show'); }
 function closeAllMenus(){ document.querySelectorAll('.dialect-menu').forEach(el=>el.classList.remove('show')); }
@@ -373,7 +337,7 @@ function setupEventListeners(){
     elements.btnPrev.onclick=prevWord;
     elements.btnPlay.onclick=playAudio;
     document.querySelectorAll('#englishMenu button').forEach(btn=>btn.onclick=()=>updateSection("EN",btn.dataset.dialect,true));
-    document.querySelectorAll('#spanishMenu button').forEach(btn=>btn.onclick=()=>updateSection("EN",btn.dataset.dialect,true)); // hiszpański wyświetla nadal EN
+    document.querySelectorAll('#spanishMenu button').forEach(btn=>btn.onclick=()=>updateSection("ES",btn.dataset.dialect,true));
     window.onclick=()=>closeAllMenus();
     document.addEventListener('keydown',e=>{
         if(e.code==='Space'||e.key===' ') { e.preventDefault(); playAudio(); }
@@ -384,6 +348,5 @@ function setupEventListeners(){
 
 init();
 </script>
-
 </body>
 </html>
