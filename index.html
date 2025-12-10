@@ -237,6 +237,7 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
+// Tablica z najczystszymi słowami, aby wykluczyć błąd formatowania
 const ALL_WORDS_DATA = [
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
     { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
@@ -281,7 +282,6 @@ function init() {
 function updateSection(lang, dialect, shouldScroll=true){
     currentLanguage=lang;
     selectedDialect=dialect;
-    // W obecnej wersji tablica danych zawiera tylko słowa EN
     filteredWords = lang==="EN"?ALL_WORDS_DATA.slice():[];
     currentIndex=0;
     document.body.className=lang==="EN"?"english":"spanish";
@@ -303,7 +303,6 @@ function displayWord(index){
     elements.word.style.opacity=0;
     setTimeout(()=>{
         elements.word.textContent=data.word;
-        // Używa ipa2 tylko dla EN i dialektu 2 (UK-RP), jeśli ipa2 jest dostępne
         const showSecondIPA = currentLanguage==="EN" && selectedDialect==="2" && data.ipa2;
         elements.phonetic.textContent = showSecondIPA?data.ipa2:data.ipa;
         elements.phonetic.style.color = currentLanguage==="EN"?"#F8AC10":"white";
@@ -315,19 +314,29 @@ function displayWord(index){
     },150);
 }
 
-// Zmieniona funkcja budowania ścieżki do audio (bazując na Twojej strukturze plików)
+// Zmodyfikowana funkcja playAudio z dodatkowym oczyszczeniem tekstu (trim)
 function playAudio(){
     if(!filteredWords.length) return;
-    const data = filteredWords[currentIndex];
     
-    // Ścieżka bezpośrednio do pliku w folderze 'audio/'
-    const path = `audio/${data.word.toLowerCase()}.mp3`;
+    // Używamy tekstu z elementu DOM, aby uniknąć problemów z tablicą danych
+    const currentWordText = elements.word.textContent;
+    
+    // Dodatkowo usuwamy wszelkie niewidzialne białe znaki z początku/końca słowa
+    const cleanedWord = currentWordText.trim(); 
+
+    if (cleanedWord === "Loading..." || cleanedWord === "No words") {
+        return; // Zabezpieczenie przed próbą odtworzenia słów w trakcie ładowania
+    }
+    
+    // Budowanie ścieżki
+    const path = `audio/${cleanedWord.toLowerCase()}.mp3`;
     
     const audio = new Audio(path);
     audio.play().catch(err=>{
-        console.warn("Błąd odtwarzania audio. Sprawdź, czy plik istnieje i jest dostępny:", path, err);
-        // Opcjonalnie: alert dla użytkownika, jeśli plik nie działa
-        // alert(`Brak pliku audio dla słowa: ${data.word}`); 
+        // Jeśli błąd nadal występuje, prawie na pewno problem jest z plikiem:
+        // - Uszkodzony plik MP3 (nie jest poprawnym formatem)
+        // - Niewidoczne spacje/znaki w nazwie pliku na serwerze
+        console.warn("Błąd odtwarzania audio dla:", cleanedWord, ". Prawdopodobnie problem z plikiem na serwerze:", path);
     });
 }
 
