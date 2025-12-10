@@ -237,7 +237,7 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
-// ZAKTUALIZOWANA I SPRAWDZONA TABLICA Z 34 SŁOWAMI I TRANSKRYPCJAMI Z CAMBRIDGE DICTIONARY
+// SPRAWDZONA I POPRAWIONA TABLICA DANYCH (możliwa przyczyna błędu składni)
 const ALL_WORDS_DATA = [
     { word:"approach", lang:"EN", ipa:"əˈproʊtʃ", ipa2:"əˈprəʊtʃ" },
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
@@ -343,19 +343,18 @@ function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
     
-    // Budowanie ścieżki: kluczowe to toLowerCase()
+    // Budowanie ścieżki
     const path = `audio/${data.word.toLowerCase().trim()}.mp3`;
     
     const audio = new Audio(path);
     
-    // Zabezpieczenie przed błędem ładowania pliku bez blokowania interfejsu
     audio.onerror = function() {
         console.error("Błąd ładowania pliku audio dla ścieżki:", path);
         console.error("Sprawdź nazwę pliku w repozytorium (musi być małą literą!) oraz upewnij się, że plik jest sprawny.");
     };
 
     audio.play().catch(err => {
-        // Zabezpieczenie przed błędem autoodtwarzania w przeglądarce
+        // Ignorowanie błędu autoodtwarzania
         console.warn("Błąd odtwarzania (poza ładowaniem pliku):", err);
     });
 }
