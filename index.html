@@ -237,7 +237,15 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
-const ALL_WORDS_DATA = [
+/*
+  Mechanizm:
+  1) próbujemy pobrać audio/audio_index.json  - oczekujemy { files: ["a.mp3","b.mp3"] }
+  2) jeśli brak - próbujemy audio/list.php które zwraca JSON array of filenames
+  3) fallback: używamy wbudowanej listy ALL_WORDS_DATA_BASE
+  4) z plików mp3 tworzymy ALL_WORDS_DATA final - łączymy z istniejącymi danymi IPA jeśli się zgadzają nazwy
+*/
+
+const ALL_WORDS_DATA_BASE = [
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
     { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
     { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
@@ -251,6 +259,8 @@ const ALL_WORDS_DATA = [
     { word:"hierarchy", lang:"EN", ipa:"ˈhaɪəˌrɑːrki", ipa2:"ˈhaɪəˌrɑːrki" },
     { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" }
 ];
+
+let ALL_WORDS_DATA = []; // docelowa tablica utworzona dynamicznie
 
 let currentLanguage = "EN";
 let filteredWords = [];
@@ -271,14 +281,98 @@ const elements = {
 const flashcardElement = document.querySelector('.flashcard');
 
 function init() {
-    updateSection("EN", "1", false);
-    setupEventListeners();
+    // najpierw ładujemy listę plików audio
+    loadAudioIndex()
+      .then(files => {
+          buildWordsFromFiles(files);
+          updateSection("EN", "1", false);
+          setupEventListeners();
+      })
+      .catch(err => {
+          console.warn("Nie udało się pobrać listy audio. Używam listy lokalnej.", err);
+          // fallback do wbudowanej listy
+          ALL_WORDS_DATA = ALL_WORDS_DATA_BASE.slice();
+          updateSection("EN", "1", false);
+          setupEventListeners();
+      });
+}
+
+function loadAudioIndex() {
+    // 1) próbujemy audio/audio_index.json
+    return fetch('audio/audio_index.json', {cache: "no-store"})
+        .then(r => {
+            if (!r.ok) throw new Error('no-json');
+            return r.json();
+        })
+        .then(json => {
+            // json może być obiektem { files: [...] } lub tablicą
+            if (Array.isArray(json)) return json;
+            if (json && json.files && Array.isArray(json.files)) return json.files;
+            throw new Error('invalid-json-structure');
+        })
+        .catch(_ => {
+            // 2) próbujemy audio/list.php (jeśli host obsługuje php)
+            return fetch('audio/list.php', {cache: "no-store"})
+                .then(r => {
+                    if (!r.ok) throw new Error('no-php');
+                    return r.json();
+                })
+                .then(json => {
+                    if (Array.isArray(json)) return json;
+                    throw new Error('invalid-php-json');
+                });
+        });
+}
+
+function sanitizeFileName(filename) {
+    // usuń ścieżki, query stringi, pozostaw samą nazwę pliku
+    const base = filename.split('/').pop().split('?')[0];
+    return base;
+}
+
+function nameToWord(filename) {
+    // konwertuj "budget.mp3" -> "budget"
+    return sanitizeFileName(filename).replace(/\.mp3$/i, '');
+}
+
+function findBaseDataForWord(word) {
+    // dopasuj do ALL_WORDS_DATA_BASE po nazwie - ignorujemy wielkość liter
+    return ALL_WORDS_DATA_BASE.find(w => w.word.toLowerCase() === word.toLowerCase());
+}
+
+function buildWordsFromFiles(files) {
+    const normalized = files.map(sanitizeFileName)
+                           .filter(f => /\.mp3$/i.test(f));
+    // twórz tablicę unikalnych słów
+    const seen = new Set();
+    const result = [];
+    normalized.forEach(f => {
+        const w = nameToWord(f);
+        if (seen.has(w.toLowerCase())) return;
+        seen.add(w.toLowerCase());
+        const base = findBaseDataForWord(w);
+        if (base) {
+            // kopiujemy informacje IPA z bazy
+            result.push(Object.assign({}, base));
+        } else {
+            // nowy wpis bez IPA, zakładamy EN - możesz później edytować
+            result.push({ word: w, lang: "EN", ipa: "", ipa2: "" });
+        }
+    });
+    // jeśli nie znaleziono żadnego pliku - fallback do bazy
+    if (result.length === 0) {
+        ALL_WORDS_DATA = ALL_WORDS_DATA_BASE.slice();
+    } else {
+        ALL_WORDS_DATA = result;
+    }
 }
 
 function updateSection(lang, dialect, shouldScroll = true) {
     currentLanguage = lang;
     selectedDialect = dialect;
     filteredWords = ALL_WORDS_DATA.filter(w => w.lang === lang);
+    // jeśli żadne filtracje, wyświetl wszystko
+    if (!filteredWords.length && ALL_WORDS_DATA.length) filteredWords = ALL_WORDS_DATA.slice();
     currentIndex = 0;
     document.body.className = lang === "EN" ? "english" : "spanish";
     elements.btnEng.classList.toggle('active', lang === "EN");
@@ -291,7 +385,12 @@ function updateSection(lang, dialect, shouldScroll = true) {
 }
 
 function displayWord(index) {
-    if (!filteredWords.length) return;
+    if (!filteredWords.length) {
+        elements.word.textContent = "No words";
+        elements.phonetic.textContent = "";
+        elements.context.textContent = "";
+        return;
+    }
     const data = filteredWords[index];
     elements.word.style.opacity = 0;
     setTimeout(() => {
@@ -312,17 +411,43 @@ function displayWord(index) {
 function playAudio() {
     if (!filteredWords.length) return;
     const data = filteredWords[currentIndex];
-    const audioPath = `audio/${data.word}.mp3`;
-    const audio = new Audio(audioPath);
-    audio.play().catch(e => console.error("Audio error:", e));
+    // spróbuj kilka wariantów nazwy pliku
+    const baseName = data.word;
+    const attempts = [
+        `audio/${baseName}.mp3`,
+        `audio/${encodeURIComponent(baseName)}.mp3`,
+        // wersja z małymi literami
+        `audio/${baseName.toLowerCase()}.mp3`
+    ];
+    // iterujemy po próbach i odtwarzamy pierwszą która załaduje się poprawnie
+    let played = false;
+    // tworzymy audio i sprawdzamy loaderror -> fallback
+    const tryPlay = (i) => {
+        if (i >= attempts.length) {
+            console.error("Brak pliku audio dla", baseName, attempts);
+            return;
+        }
+        const path = attempts[i];
+        const audio = new Audio(path);
+        audio.play().then(() => {
+            played = true;
+        }).catch(err => {
+            // spróbuj następnego
+            console.warn("Nie udało się odtworzyć", path, err);
+            tryPlay(i + 1);
+        });
+    };
+    tryPlay(0);
 }
 
 function nextWord() {
+    if (!filteredWords.length) return;
     currentIndex = (currentIndex + 1) % filteredWords.length;
     displayWord(currentIndex);
 }
 
 function prevWord() {
+    if (!filteredWords.length) return;
     currentIndex = (currentIndex - 1 + filteredWords.length) % filteredWords.length;
     displayWord(currentIndex);
 }
