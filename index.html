@@ -238,23 +238,22 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
+// Tablica danych ze WSZYSTKIMI poprawionymi słowami (report i strategy używają nowych nazw)
 const ALL_WORDS_DATA = [
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
     { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
-    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
-    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt" },
+    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi", audio:"strategy_b" }, // UŻYWA strategy_b.mp3
+    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt", audio:"report_b" }, // UŻYWA report_b.mp3
     { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", ipa2:"ɪnˈɡeɪdʒmənt" },
     { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
     { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
     { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", ipa2:"əbˈdʒektɪv" },
     { word:"priorities", lang:"EN", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz" },
     { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" },
-    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪə.rɑːr.ki", ipa2:"ˈhaɪ.ə.rɑː.ki" },
+    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪə.rɑːr.ki", ipa2:"ˈhaɪ.ə.rɑːr.ki" },
     { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
     { word:"revenue", lang:"EN", ipa:"ˈrevənuː", ipa2:"ˈrevənjuː" },
     { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" },
-    
-    // NOWE SŁOWO DO TESTU AUDIO
     { word:"digital", lang:"EN", ipa:"ˈdɪdʒɪtl", ipa2:"ˈdɪdʒɪtəl" }
 ];
 
@@ -289,7 +288,7 @@ function updateSection(lang, dialect, shouldScroll=true){
     currentIndex=0;
     document.body.className=lang==="EN"?"english":"spanish";
     elements.btnEng.classList.toggle('active',lang==="EN");
-    elements.btnEsp.classList.toggle('active',lang==="ES");
+    elements.btnEsp.classList.toggle('active',lang==="ES');
     closeAllMenus();
     displayWord(currentIndex);
     if(shouldScroll && flashcardElement) flashcardElement.scrollIntoView({behavior:'smooth',block:'start'});
@@ -317,10 +316,14 @@ function displayWord(index){
     },150);
 }
 
+// Zmodyfikowana funkcja playAudio, która używa niestandardowej nazwy pliku z pola 'audio'
 function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
-    const path = `audio/${data.word.toLowerCase()}.mp3`;
+    // Jeśli pole 'audio' istnieje (dla report_b i strategy_b), użyj jego wartości. 
+    // W przeciwnym razie użyj standardowej nazwy słowa (dla wszystkich innych).
+    const audioFileName = data.audio ? data.audio : data.word.toLowerCase();
+    const path = `audio/${audioFileName}.mp3`;
     const audio = new Audio(path);
     audio.play().catch(err=>console.warn("Audio error",path,err));
 }
