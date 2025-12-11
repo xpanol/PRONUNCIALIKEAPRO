@@ -238,7 +238,6 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
-// Tablica danych bez pól 'audio' (powrócenie do prostszej wersji)
 const ALL_WORDS_DATA = [
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
     { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
@@ -250,10 +249,12 @@ const ALL_WORDS_DATA = [
     { word:"objective", lang:"EN", ipa:"əbˈdʒektɪv", ipa2:"əbˈdʒektɪv" },
     { word:"priorities", lang:"EN", ipa:"praɪˈɔːrɪtiz", ipa2:"praɪˈɒrɪtɪz" },
     { word:"thoroughly", lang:"EN", ipa:"ˈθʌrəli", ipa2:"ˈθʌrəli" },
-    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪə.rɑːr.ki", ipa2:"ˈhaɪ.ə.rɑːr.ki" },
+    { word:"hierarchy", lang:"EN", ipa:"ˈhaɪə.rɑːr.ki", ipa2:"ˈhaɪ.ə.rɑː.ki" },
     { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
     { word:"revenue", lang:"EN", ipa:"ˈrevənuː", ipa2:"ˈrevənjuː" },
     { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" },
+    
+    // NOWE SŁOWO DO TESTU AUDIO
     { word:"digital", lang:"EN", ipa:"ˈdɪdʒɪtl", ipa2:"ˈdɪdʒɪtəl" }
 ];
 
@@ -288,7 +289,7 @@ function updateSection(lang, dialect, shouldScroll=true){
     currentIndex=0;
     document.body.className=lang==="EN"?"english":"spanish";
     elements.btnEng.classList.toggle('active',lang==="EN");
-    elements.btnEsp.classList.toggle('active',lang==="ES');
+    elements.btnEsp.classList.toggle('active',lang==="ES");
     closeAllMenus();
     displayWord(currentIndex);
     if(shouldScroll && flashcardElement) flashcardElement.scrollIntoView({behavior:'smooth',block:'start'});
@@ -316,12 +317,10 @@ function displayWord(index){
     },150);
 }
 
-// Przywrócona prosta funkcja playAudio
 function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
-    // ZAWSZE używa nazwy słowa jako nazwy pliku MP3
-    const path = `audio/${data.word.toLowerCase()}.mp3`; 
+    const path = `audio/${data.word.toLowerCase()}.mp3`;
     const audio = new Audio(path);
     audio.play().catch(err=>console.warn("Audio error",path,err));
 }
