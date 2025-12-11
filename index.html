@@ -238,12 +238,12 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
-// Tablica danych ze WSZYSTKIMI poprawionymi słowami (report i strategy używają nowych nazw)
+// Tablica danych z POPRAWNĄ składnią i nowymi nazwami plików dla report i strategy
 const ALL_WORDS_DATA = [
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
     { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
-    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi", audio:"strategy_b" }, // UŻYWA strategy_b.mp3
-    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt", audio:"report_b" }, // UŻYWA report_b.mp3
+    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi", audio:"strategy_b" },
+    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt", audio:"report_b" },
     { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", ipa2:"ɪnˈɡeɪdʒmənt" },
     { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
     { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
@@ -254,7 +254,7 @@ const ALL_WORDS_DATA = [
     { word:"measure", lang:"EN", ipa:"ˈmeʒər", ipa2:"ˈmeʒər" },
     { word:"revenue", lang:"EN", ipa:"ˈrevənuː", ipa2:"ˈrevənjuː" },
     { word:"discount", lang:"EN", ipa:"ˈdɪskaʊnt", ipa2:"ˈdɪskaʊnt" },
-    { word:"digital", lang:"EN", ipa:"ˈdɪdʒɪtl", ipa2:"ˈdɪdʒɪtəl" }
+    { word:"digital", lang:"EN", ipa:"ˈdɪdʒɪtl", ipa2:"ˈdɪdʒɪtəl" } // TUTAJ CELOWO USUNIĘTY PRZECINEK
 ];
 
 let currentLanguage = "EN";
@@ -316,12 +316,9 @@ function displayWord(index){
     },150);
 }
 
-// Zmodyfikowana funkcja playAudio, która używa niestandardowej nazwy pliku z pola 'audio'
 function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
-    // Jeśli pole 'audio' istnieje (dla report_b i strategy_b), użyj jego wartości. 
-    // W przeciwnym razie użyj standardowej nazwy słowa (dla wszystkich innych).
     const audioFileName = data.audio ? data.audio : data.word.toLowerCase();
     const path = `audio/${audioFileName}.mp3`;
     const audio = new Audio(path);
