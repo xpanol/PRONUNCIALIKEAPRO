@@ -34,7 +34,7 @@ body {
 }
 
 body.english { background-color: var(--bg-english); color: var(--text-english); }
-body.spanish { background-color: var(--spanish); color: var(--text-spanish); }
+body.spanish { background-color: var(--bg-spanish); color: var(--text-spanish); }
 
 h1 {
     margin: 10px 0 30px 0;
@@ -238,12 +238,12 @@ body.spanish .nav-btn:hover { background-color: white; color: black; }
 <div class="spacer"></div>
 
 <script>
-// Tablica danych z POPRAWNĄ składnią i nowymi nazwami plików dla report i strategy
+// Tablica danych bez pól 'audio' (powrócenie do prostszej wersji)
 const ALL_WORDS_DATA = [
     { word:"budget", lang:"EN", ipa:"ˈbʌdʒɪt", ipa2:"ˈbʌdʒɪt" },
     { word:"client", lang:"EN", ipa:"ˈklaɪənt", ipa2:"ˈklaɪənt" },
-    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi", audio:"strategy_b" },
-    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt", audio:"report_b" },
+    { word:"strategy", lang:"EN", ipa:"ˈstrætədʒi", ipa2:"ˈstrætədʒi" },
+    { word:"report", lang:"EN", ipa:"rɪˈpɔːrt", ipa2:"rɪˈpɔːt" },
     { word:"engagement", lang:"EN", ipa:"ɪnˈɡeɪdʒmənt", ipa2:"ɪnˈɡeɪdʒmənt" },
     { word:"quarter", lang:"EN", ipa:"ˈkwɔːrtər", ipa2:"ˈkwɔːtə" },
     { word:"schedule", lang:"EN", ipa:"ˈskedʒuːl", ipa2:"ˈʃedjuːl" },
@@ -316,11 +316,12 @@ function displayWord(index){
     },150);
 }
 
+// Przywrócona prosta funkcja playAudio
 function playAudio(){
     if(!filteredWords.length) return;
     const data = filteredWords[currentIndex];
-    const audioFileName = data.audio ? data.audio : data.word.toLowerCase();
-    const path = `audio/${audioFileName}.mp3`;
+    // ZAWSZE używa nazwy słowa jako nazwy pliku MP3
+    const path = `audio/${data.word.toLowerCase()}.mp3`; 
     const audio = new Audio(path);
     audio.play().catch(err=>console.warn("Audio error",path,err));
 }
